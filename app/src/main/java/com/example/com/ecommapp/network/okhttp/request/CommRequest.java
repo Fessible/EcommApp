@@ -1,4 +1,4 @@
-package com.example.com.ecommapp.okhttp.request;
+package com.example.com.ecommapp.network.okhttp.request;
 
 import java.util.Map;
 

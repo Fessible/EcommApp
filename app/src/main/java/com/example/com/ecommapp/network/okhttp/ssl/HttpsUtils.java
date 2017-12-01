@@ -1,4 +1,4 @@
-package com.example.com.ecommapp.okhttp.ssl;
+package com.example.com.ecommapp.network.okhttp.ssl;
 
 import java.io.IOException;
 import java.io.InputStream;

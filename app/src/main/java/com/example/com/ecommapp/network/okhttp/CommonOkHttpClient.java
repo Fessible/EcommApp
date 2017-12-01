@@ -1,7 +1,7 @@
-package com.example.com.ecommapp.okhttp;
+package com.example.com.ecommapp.network.okhttp;
 
 import com.example.com.ecommapp.listener.CommonJsonCallback;
-import com.example.com.ecommapp.okhttp.ssl.HttpsUtils;
+import com.example.com.ecommapp.network.okhttp.ssl.HttpsUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -9,7 +9,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
