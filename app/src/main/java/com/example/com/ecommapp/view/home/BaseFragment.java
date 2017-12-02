@@ -1,6 +1,6 @@
 package com.example.com.ecommapp.view.home;
 
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 
 /**
  * Created by rhm on 2017/10/31.

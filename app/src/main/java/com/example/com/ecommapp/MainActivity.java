@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home_layout);
         Log.d("tag", "running");
         CommonOkHttpClient.sendRequest(CommRequest.createGetRequest("http://www.sohu.com", null), new CommonJsonCallback(new DisposeDataHandle(new DisposeDataListener() {
             @Override
