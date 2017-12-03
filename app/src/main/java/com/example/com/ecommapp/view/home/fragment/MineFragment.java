@@ -1,5 +1,8 @@
 package com.example.com.ecommapp.view.home.fragment;
 
+import android.os.Bundle;
+import android.view.View;
+
 import com.example.com.ecommapp.view.home.BaseFragment;
 
 /**
@@ -7,4 +10,13 @@ import com.example.com.ecommapp.view.home.BaseFragment;
  */
 
 public class MineFragment extends BaseFragment{
+    @Override
+    protected int getFragmentLayout() {
+        return 0;
+    }
+
+    @Override
+    protected void initView(View view, Bundle savedInstanceState) {
+
+    }
 }
