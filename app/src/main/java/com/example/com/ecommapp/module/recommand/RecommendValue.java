@@ -17,6 +17,8 @@ public class RecommendValue extends BaseModel {
     public String price;
     public String text;
     public String from;
+    public String site;
+    public String resource;
     public int zan;
     public List<String> url;
 
