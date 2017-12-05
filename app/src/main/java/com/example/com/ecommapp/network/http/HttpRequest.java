@@ -1,8 +1,8 @@
 package com.example.com.ecommapp.network.http;
 
-import com.example.com.ecommapp.listener.CommonJsonCallback;
-import com.example.com.ecommapp.listener.DisposeDataHandle;
-import com.example.com.ecommapp.listener.DisposeDataListener;
+import com.example.com.ecommapp.network.okhttp.listener.CommonJsonCallback;
+import com.example.com.ecommapp.network.okhttp.listener.DisposeDataHandle;
+import com.example.com.ecommapp.network.okhttp.listener.DisposeDataListener;
 import com.example.com.ecommapp.network.okhttp.CommonOkHttpClient;
 import com.example.com.ecommapp.network.okhttp.request.CommRequest;
 

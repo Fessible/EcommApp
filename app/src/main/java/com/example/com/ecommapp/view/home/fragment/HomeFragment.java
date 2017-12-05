@@ -3,25 +3,18 @@ package com.example.com.ecommapp.view.home.fragment;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.adapter.HomeAdapter;
-import com.example.com.ecommapp.listener.DisposeDataListener;
+import com.example.com.ecommapp.network.okhttp.listener.DisposeDataListener;
 import com.example.com.ecommapp.module.recommand.RecommendModel;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
-import com.example.com.ecommapp.network.http.HttpConstants;
 import com.example.com.ecommapp.network.http.HttpRequest;
-import com.example.com.ecommapp.network.okhttp.CommonOkHttpClient;
-import com.example.com.ecommapp.network.okhttp.request.CommRequest;
 import com.example.com.ecommapp.view.home.BaseFragment;
 
 import java.util.ArrayList;
