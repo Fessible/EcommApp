@@ -1,1 +1,1 @@
-include ':app', ':imageloader', ':slidingmenu'
+include ':app', ':support-sdk'

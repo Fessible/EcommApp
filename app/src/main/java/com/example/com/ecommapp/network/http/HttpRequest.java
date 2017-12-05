@@ -1,18 +1,25 @@
 package com.example.com.ecommapp.network.http;
 
-import com.example.com.ecommapp.network.okhttp.listener.CommonJsonCallback;
-import com.example.com.ecommapp.network.okhttp.listener.DisposeDataHandle;
-import com.example.com.ecommapp.network.okhttp.listener.DisposeDataListener;
-import com.example.com.ecommapp.network.okhttp.CommonOkHttpClient;
-import com.example.com.ecommapp.network.okhttp.request.CommRequest;
+import android.app.DownloadManager;
+
+import com.example.com.ecommapp.module.recommand.RecommendModel;
+import com.example.com.support.okhttp.CommOkhttpClient;
+import com.example.com.support.okhttp.listener.DisposableHandler;
+import com.example.com.support.okhttp.listener.DisposeListener;
+import com.example.com.support.okhttp.request.CommonRequest;
+
+import okhttp3.Request;
 
 /**
  * Created by rhm on 2017/12/3.
  */
 
 public class HttpRequest {
-    //首页请求
-    public static void requestRecommendData(DisposeDataListener listener) {
-        CommonOkHttpClient.sendRequest(CommRequest.createGetRequest(HttpConstants.HOME, null), new CommonJsonCallback(new DisposeDataHandle(listener)));
+
+    //请求首页
+    public  static  void  HomeRequest(DisposeListener listener) {
+        Request request = CommonRequest.getInstance().createGet(HttpConstants.HOME);
+        CommOkhttpClient.getInstance().sendRequest(request, new DisposableHandler(RecommendModel.class, listener));
+
     }
 }

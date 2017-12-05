@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.activity.base.BaseActivity;
@@ -25,7 +26,5 @@ public class HomeActivity extends BaseActivity {
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.content_layout, mHomeFragment);
         fragmentTransaction.commit();
-
     }
-
 }

@@ -3,7 +3,6 @@ package com.example.com.ecommapp.view.home.fragment;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -11,11 +10,12 @@ import android.widget.TextView;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.adapter.HomeAdapter;
-import com.example.com.ecommapp.network.okhttp.listener.DisposeDataListener;
 import com.example.com.ecommapp.module.recommand.RecommendModel;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
 import com.example.com.ecommapp.network.http.HttpRequest;
 import com.example.com.ecommapp.view.home.BaseFragment;
+import com.example.com.support.okhttp.exception.HttpException;
+import com.example.com.support.okhttp.listener.DisposeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,6 @@ public class HomeFragment extends BaseFragment {
         listView = view.findViewById(R.id.list_view);
         adapter = new HomeAdapter(getActivity(), mData);
         listView.setAdapter(adapter);
-
         AnimationDrawable animationDrawable = (AnimationDrawable) loadView.getDrawable();
         animationDrawable.start();
         requestRecommend();
@@ -61,19 +60,16 @@ public class HomeFragment extends BaseFragment {
      * 请求首页数据
      */
     private void requestRecommend() {
-        HttpRequest.requestRecommendData(new DisposeDataListener() {
+        HttpRequest.HomeRequest(new DisposeListener() {
             @Override
             public void onSuccess(Object responseObj) {
-                Log.d(TAG, "Success: " );
-                if (responseObj != null) {
-                    recommendModel = (RecommendModel) responseObj;
-                    showSuccessView(recommendModel);
-                }
+                RecommendModel recommendModel = (RecommendModel) responseObj;
+                showSuccessView(recommendModel);
             }
 
             @Override
-            public void onFailure(Object responObj) {
-                Log.d(TAG, "onFailure: " + responObj.toString());
+            public void onFailure(String msg) {
+                showShortToast(msg);
             }
         });
     }
@@ -89,6 +85,7 @@ public class HomeFragment extends BaseFragment {
             mData = recommendModel.data;
             loadView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
+            adapter.setData(mData);
             adapter.notifyDataSetChanged();
         } else {
             showErrorView();

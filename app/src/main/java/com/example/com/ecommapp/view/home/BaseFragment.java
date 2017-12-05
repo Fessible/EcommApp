@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 /**
  * Created by rhm on 2017/10/31.
@@ -30,4 +31,8 @@ public abstract class BaseFragment extends Fragment {
     }
     //初始化View
     protected abstract void initView(View view, Bundle savedInstanceState);
+
+    protected void showShortToast(String msg) {
+        Toast.makeText(getActivity(),msg,Toast.LENGTH_SHORT).show();
+    }
 }

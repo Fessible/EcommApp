@@ -9,8 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/imageloader" />
-            <option value="$PROJECT_DIR$/slidingmenu" />
+            <option value="$PROJECT_DIR$/support-sdk" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
