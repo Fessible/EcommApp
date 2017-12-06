@@ -1,6 +1,8 @@
 package com.example.com.ecommapp.adapter;
 
 import android.content.Context;
+import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,9 @@ import com.example.com.support.imageloader.ImageLoaderManager;
 
 import java.util.List;
 
+import butterknife.internal.Utils;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.internal.Util;
 
 /**
  * 首页ListView的适配器
@@ -26,8 +30,9 @@ public class HomeAdapter extends BaseAdapter {
     //三种类型
     private final static int TYPE_COUNT = 3;
     private final static int TYPE_VEDIO = 0x00;
-    private final static int CARD_TYPE = 0x01;
-    private final static int CARD_TYPE_MULTI = 0x02;
+    private final static int TYPE_CARD = 0x02;
+    private final static int TYPE_CARD_MULTI = 0x01;
+    private final static int TYPE_VIEW_PAGER = 0x03;
     private List<RecommendValue> mData;
     private Context mContext;
     private LayoutInflater inflater;
@@ -75,52 +80,55 @@ public class HomeAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
-        ViewHolder mViewHolder = null;
+        ViewHolder mViewHolder = new ViewHolder();
         final RecommendValue value = (RecommendValue) getItem(position);
         View view = convertView;
         if (view == null) {
             switch (type) {
                 case TYPE_VEDIO:
-                    mViewHolder = new ViewHolder();
                     view = inflater.inflate(R.layout.item_video_layout, parent, false);
                     break;
-                case CARD_TYPE:
-                    mViewHolder = new ViewHolder();
-                    view = inflater.inflate(R.layout.item_product_card_one_layout, parent, false);
-                    mViewHolder.mPriceView = (TextView) view.findViewById(R.id.item_price_view);
-                    mViewHolder.mFromView = (TextView) view.findViewById(R.id.item_from_view);
-                    mViewHolder.mZanView = (TextView) view.findViewById(R.id.item_zan_view);
-                    mViewHolder.mProductOneView = (ImageView) view.findViewById(R.id.product_view_one);
-                    mViewHolder.mProductTwoView = (ImageView) view.findViewById(R.id.product_view_two);
-                    mViewHolder.mProductThreeView = (ImageView) view.findViewById(R.id.product_view_three);
+                case TYPE_CARD_MULTI:
+                    view = inflater.inflate(R.layout.item_multi_photo, parent, false);
+                    mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
+                    mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
+                    mViewHolder.mZanView = view.findViewById(R.id.item_zan_view);
+                    mViewHolder.mProductOneView = view.findViewById(R.id.product_view_one);
+                    mViewHolder.mProductTwoView = view.findViewById(R.id.product_view_two);
+                    mViewHolder.mProductThreeView = view.findViewById(R.id.product_view_three);
                     break;
-                case CARD_TYPE_MULTI:
-                    mViewHolder = new ViewHolder();
-                    view = inflater.inflate(R.layout.item_product_card_two_layout, parent, false);
-                    mViewHolder.mProductView = (ImageView) view.findViewById(R.id.product_photo_view);
-                    mViewHolder.mPriceView = (TextView) view.findViewById(R.id.item_price_view);
-                    mViewHolder.mFromView = (TextView) view.findViewById(R.id.item_from_view);
-                    mViewHolder.mZanView = (TextView) view.findViewById(R.id.item_zan_view);
+                case TYPE_CARD:
+                    view = inflater.inflate(R.layout.item_single_photo, parent, false);
+                    mViewHolder.mProductView = view.findViewById(R.id.product_photo_view);
+                    mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
+                    mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
+                    mViewHolder.mZanView = view.findViewById(R.id.item_zan_view);
+                    break;
+                case TYPE_VIEW_PAGER:
+                    view = inflater.inflate(R.layout.item_view_pager, parent, false);
+                    mViewHolder.mViewPager = view.findViewById(R.id.item_view_pager);
+                    //设置间隔
+                    mViewHolder.mViewPager.setPageMargin(com.example.com.support.Utils.dip2px(mContext, 15));
                     break;
             }
-//            mViewHolder.mLogoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
-//            mViewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item_title_view);
-//            mViewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item_info_view);
-//            mViewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item_footer_view);
+            mViewHolder.mLogoView = view.findViewById(R.id.item_logo_view);
+            mViewHolder.mTitleView = view.findViewById(R.id.item_title_view);
+            mViewHolder.mInfoView = view.findViewById(R.id.item_info_view);
+            mViewHolder.mFooterView = view.findViewById(R.id.item_footer_view);
             view.setTag(mViewHolder);
         }//有tag时
         else {
             mViewHolder = (ViewHolder) view.getTag();
         }
         //填充数据
-//        imageLoader.displayImage(mViewHolder.mLogoView, value.logo);
-//        mViewHolder.mTitleView.setText(TextUtils.isEmpty(value.title) ? "" : value.title);
-//        mViewHolder.mInfoView.setText(value.info);
-//        mViewHolder.mFooterView.setText(TextUtils.isEmpty(value.text) ? "" : value.text);
+        imageLoader.displayImage(mViewHolder.mLogoView, value.logo);
+        mViewHolder.mTitleView.setText(TextUtils.isEmpty(value.title) ? "" : value.title);
+        mViewHolder.mInfoView.setText((mContext.getString(R.string.tian_qian, value.info)));
+        mViewHolder.mFooterView.setText(TextUtils.isEmpty(value.text) ? "" : value.text);
         switch (type) {
             case TYPE_VEDIO:
                 break;
-            case CARD_TYPE:
+            case TYPE_CARD_MULTI:
                 mViewHolder.mPriceView.setText(value.price);
                 mViewHolder.mFromView.setText(value.from);
                 mViewHolder.mZanView.setText(mContext.getString(R.string.dian_zan).concat(String.valueOf(value.zan)));
@@ -128,11 +136,13 @@ public class HomeAdapter extends BaseAdapter {
                 imageLoader.displayImage(mViewHolder.mProductTwoView, value.url.get(1));
                 imageLoader.displayImage(mViewHolder.mProductThreeView, value.url.get(2));
                 break;
-            case CARD_TYPE_MULTI:
+            case TYPE_CARD:
                 mViewHolder.mPriceView.setText(value.price);
                 mViewHolder.mFromView.setText(value.from);
                 mViewHolder.mZanView.setText(mContext.getString(R.string.dian_zan).concat(String.valueOf(value.zan)));
                 imageLoader.displayImage(mViewHolder.mProductView, value.url.get(0));
+                break;
+            case TYPE_VIEW_PAGER:
                 break;
         }
         return view;
@@ -159,5 +169,7 @@ public class HomeAdapter extends BaseAdapter {
         private ImageView mProductThreeView;
         //Card Two特有属性
         private ImageView mProductView;
+        //View Pager属性
+        private ViewPager mViewPager;
     }
 }

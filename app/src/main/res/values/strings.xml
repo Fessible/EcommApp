@@ -90,7 +90,7 @@
     <string name="no_new_version_title">已是最新版</string>
     <string name="no_new_version_msg">您当前已经是最新版本，无需更新。</string>
     <string name="confirm">确定</string>
-    <string name="tian_qian">天前</string>
+    <string name="tian_qian">%1$d天前</string>
     <string name="dian_zan">点赞</string>
 
     <!--引导页-->
