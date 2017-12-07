@@ -2,7 +2,6 @@ package com.example.com.ecommapp.adapter;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +16,7 @@ import com.example.com.support.imageloader.ImageLoaderManager;
 
 import java.util.List;
 
-import butterknife.internal.Utils;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.internal.Util;
 
 /**
  * 首页ListView的适配器
@@ -28,7 +25,7 @@ import okhttp3.internal.Util;
 
 public class HomeAdapter extends BaseAdapter {
     //三种类型
-    private final static int TYPE_COUNT = 3;
+    private final static int TYPE_COUNT = 4;
     private final static int TYPE_VEDIO = 0x00;
     private final static int TYPE_CARD = 0x02;
     private final static int TYPE_CARD_MULTI = 0x01;
