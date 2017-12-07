@@ -37,6 +37,7 @@ public class HomeAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private ImageLoaderManager imageLoader;
+    private HomeViewPagerAdapter adapter;
 
     public HomeAdapter(Context context, List<RecommendValue> data) {
         this.mContext = context;
@@ -108,7 +109,6 @@ public class HomeAdapter extends BaseAdapter {
                     view = inflater.inflate(R.layout.item_view_pager, parent, false);
                     mViewHolder.mViewPager = view.findViewById(R.id.item_view_pager);
                     //设置间隔
-                    mViewHolder.mViewPager.setPageMargin(com.example.com.support.Utils.dip2px(mContext, 15));
                     break;
             }
             mViewHolder.mLogoView = view.findViewById(R.id.item_logo_view);
@@ -122,9 +122,9 @@ public class HomeAdapter extends BaseAdapter {
         }
         //填充数据
         imageLoader.displayImage(mViewHolder.mLogoView, value.logo);
-        mViewHolder.mTitleView.setText(TextUtils.isEmpty(value.title) ? "" : value.title);
+        mViewHolder.mTitleView.setText(value.title);
         mViewHolder.mInfoView.setText((mContext.getString(R.string.tian_qian, value.info)));
-        mViewHolder.mFooterView.setText(TextUtils.isEmpty(value.text) ? "" : value.text);
+        mViewHolder.mFooterView.setText(value.text);
         switch (type) {
             case TYPE_VEDIO:
                 break;
@@ -143,6 +143,10 @@ public class HomeAdapter extends BaseAdapter {
                 imageLoader.displayImage(mViewHolder.mProductView, value.url.get(0));
                 break;
             case TYPE_VIEW_PAGER:
+                List<String> list = value.url;
+                adapter = new HomeViewPagerAdapter(mContext, list);
+                mViewHolder.mViewPager.setAdapter(adapter);
+                mViewHolder.mViewPager.setCurrentItem(list.size()*100);
                 break;
         }
         return view;
