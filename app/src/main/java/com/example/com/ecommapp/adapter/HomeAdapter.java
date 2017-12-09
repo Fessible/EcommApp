@@ -105,7 +105,6 @@ public class HomeAdapter extends BaseAdapter {
                 case TYPE_VIEW_PAGER:
                     view = inflater.inflate(R.layout.item_view_pager, parent, false);
                     mViewHolder.mViewPager = view.findViewById(R.id.item_view_pager);
-                    //设置间隔
                     break;
             }
             mViewHolder.mLogoView = view.findViewById(R.id.item_logo_view);
