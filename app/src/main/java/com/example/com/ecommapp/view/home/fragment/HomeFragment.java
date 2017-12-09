@@ -1,24 +1,28 @@
 package com.example.com.ecommapp.view.home.fragment;
 
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.adapter.HomeAdapter;
 import com.example.com.ecommapp.module.recommand.RecommendModel;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
 import com.example.com.ecommapp.network.http.HttpRequest;
-import com.example.com.ecommapp.view.home.BaseFragment;
-import com.example.com.support.okhttp.exception.HttpException;
+import com.example.com.ecommapp.base.BaseFragment;
+import com.example.com.ecommapp.zxing.app.CaptureActivity;
 import com.example.com.support.okhttp.listener.DisposeListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by rhm on 2017/10/31.
@@ -26,13 +30,22 @@ import java.util.List;
 
 public class HomeFragment extends BaseFragment {
     private final static String TAG = "HomeFragment";
-    private Context mContext;
-    private View mContentView;
-    private TextView txtScan;
-    private TextView txtCategory;
-    private TextView txtSearch;
-    private ImageView loadView;
-    private ListView listView;
+
+    @BindView(R.id.category_view)
+    TextView txtCategory;
+
+    @BindView(R.id.qrcode_view)
+    TextView txtScan;
+
+    @BindView(R.id.loading_view)
+    ImageView loadView;
+
+    @BindView(R.id.list_view)
+    ListView listView;
+
+    @BindView(R.id.search_view)
+    TextView txtSearch;
+
     private HomeAdapter adapter;
     private RecommendModel recommendModel;
     private List<RecommendValue> mData = new ArrayList<>();
@@ -44,10 +57,6 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        loadView = view.findViewById(R.id.loading_view);
-        txtScan = view.findViewById(R.id.qrcode_view);
-        txtCategory = view.findViewById(R.id.category_view);
-        listView = view.findViewById(R.id.list_view);
         adapter = new HomeAdapter(getActivity(), mData);
         listView.setAdapter(adapter);
         AnimationDrawable animationDrawable = (AnimationDrawable) loadView.getDrawable();
@@ -96,5 +105,11 @@ public class HomeFragment extends BaseFragment {
      * 请求失败执行
      */
     private void showErrorView() {
+    }
+
+    @OnClick(R.id.qrcode_view)
+    public void clickQrcode(View view){
+        Intent intent = new Intent(getActivity(), CaptureActivity.class);
+        startActivity(intent);
     }
 }

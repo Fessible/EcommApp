@@ -16,6 +16,8 @@ import com.example.com.support.imageloader.ImageLoaderManager;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -78,16 +80,18 @@ public class HomeAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
-        ViewHolder mViewHolder = new ViewHolder();
+        ViewHolder mViewHolder = null;
         final RecommendValue value = (RecommendValue) getItem(position);
         View view = convertView;
         if (view == null) {
             switch (type) {
                 case TYPE_VEDIO:
                     view = inflater.inflate(R.layout.item_video_layout, parent, false);
+                    mViewHolder = new ViewHolder(view);
                     break;
                 case TYPE_CARD_MULTI:
                     view = inflater.inflate(R.layout.item_multi_photo, parent, false);
+                    mViewHolder = new ViewHolder(view);
                     mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
                     mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
                     mViewHolder.mZanView = view.findViewById(R.id.item_zan_view);
@@ -97,6 +101,7 @@ public class HomeAdapter extends BaseAdapter {
                     break;
                 case TYPE_CARD:
                     view = inflater.inflate(R.layout.item_single_photo, parent, false);
+                    mViewHolder = new ViewHolder(view);
                     mViewHolder.mProductView = view.findViewById(R.id.product_photo_view);
                     mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
                     mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
@@ -104,6 +109,7 @@ public class HomeAdapter extends BaseAdapter {
                     break;
                 case TYPE_VIEW_PAGER:
                     view = inflater.inflate(R.layout.item_view_pager, parent, false);
+                    mViewHolder = new ViewHolder(view);
                     mViewHolder.mViewPager = view.findViewById(R.id.item_view_pager);
                     break;
             }
@@ -142,34 +148,59 @@ public class HomeAdapter extends BaseAdapter {
                 List<String> list = value.url;
                 adapter = new HomeViewPagerAdapter(mContext, list);
                 mViewHolder.mViewPager.setAdapter(adapter);
-                mViewHolder.mViewPager.setCurrentItem(list.size()*100);
+                mViewHolder.mViewPager.setCurrentItem(list.size() * 100);
                 break;
         }
         return view;
     }
 
 
-    private static class ViewHolder {
+    static class ViewHolder {
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
+
         //所有Card共有属性
-        private CircleImageView mLogoView;
-        private TextView mTitleView;
-        private TextView mInfoView;
-        private TextView mFooterView;
+
+        CircleImageView mLogoView;
+
+        TextView mTitleView;
+
+
+        TextView mInfoView;
+
+
+        TextView mFooterView;
+
         //Video Card特有属性
-        private RelativeLayout mVieoContentLayout;
-        private ImageView mShareView;
+
+        RelativeLayout mVieoContentLayout;
+
+
+        ImageView mShareView;
 
         //Video Card外所有Card具有属性
-        private TextView mPriceView;
-        private TextView mFromView;
-        private TextView mZanView;
-        //Card One特有属性
-        private ImageView mProductOneView;
-        private ImageView mProductTwoView;
-        private ImageView mProductThreeView;
-        //Card Two特有属性
-        private ImageView mProductView;
+
+        TextView mPriceView;
+
+        TextView mFromView;
+
+        TextView mZanView;
+
+        //Card Mutil
+
+        ImageView mProductOneView;
+
+        ImageView mProductTwoView;
+
+        ImageView mProductThreeView;
+
+
+        ImageView mProductView;
         //View Pager属性
-        private ViewPager mViewPager;
+
+        ViewPager mViewPager;
+
+
     }
 }

@@ -1,4 +1,4 @@
-package com.example.com.ecommapp.activity.base;
+package com.example.com.ecommapp.base;
 
 import android.support.v7.app.AppCompatActivity;
 

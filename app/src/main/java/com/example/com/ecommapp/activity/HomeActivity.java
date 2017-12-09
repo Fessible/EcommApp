@@ -4,10 +4,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
-import com.example.com.ecommapp.activity.base.BaseActivity;
+import com.example.com.ecommapp.base.BaseActivity;
 import com.example.com.ecommapp.view.home.fragment.HomeFragment;
 
 /**
