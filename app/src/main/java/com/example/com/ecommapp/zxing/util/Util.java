@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 
 public class Util {
+    public static int REQUST_CODE = 1;
 
     public static Activity currentActivity = null;
 
@@ -68,11 +69,10 @@ public class Util {
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             if (ActivityCompat.checkSelfPermission(currentActivity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(currentActivity, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+                ActivityCompat.requestPermissions(currentActivity, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUST_CODE);
 
             } else {
                 imeiCode = tm.getDeviceId();
-
             }
             return imeiCode;
         } catch (Exception e) {
@@ -81,4 +81,13 @@ public class Util {
         }
     }
 
+    public static int Dp2Px(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
+
+    public static int Px2Dp(Context context, float px) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (px / scale + 0.5f);
+    }
 }

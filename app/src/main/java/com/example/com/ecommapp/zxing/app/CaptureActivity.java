@@ -16,8 +16,11 @@
 
 package com.example.com.ecommapp.zxing.app;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,6 +36,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
@@ -94,7 +99,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private static final String PRODUCT_SEARCH_URL_SUFFIX = "/m/products/scan";
     private static final String ZXING_URL = "http://zxing.appspot.com/scan";
     private static final String RETURN_URL_PARAM = "ret";
-
+    private String text;
     private static final Set<ResultMetadataType> DISPLAYABLE_METADATA_TYPES;
 
     static {
@@ -183,37 +188,43 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
      * 闪光灯点击事件
      */
     private OnClickListener click = new OnClickListener() {
-
         @Override
         public void onClick(View v) {
-            int id = v.getId();
-            if (id == R.id.button_back) {
-                finish();
-            } else if (id == R.id.flash_btn) {
-                if (!isFlash) {
-                    CameraManager.get().turnLightOn();
-                } else {
-
-                    CameraManager.get().turnLightOff();
-                }
-                isFlash = !isFlash;
-            } else if (id == R.id.photo_btn) {
-                // 打开手机中的相册
-                Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); // "android.intent.action.GET_CONTENT"
-                innerIntent.setType("image/*");
-                Intent wrapperIntent = Intent.createChooser(innerIntent, "选择二维码图片");
-                startActivityForResult(wrapperIntent, REQUEST_CODE);
-            } else if (id == R.id.qrcode_btn) {
-                // 跳转到生成二维码页面
-                Bitmap b = createQRCode();
-                Intent intent = getIntent();
-                intent.putExtra("QR_CODE", b);
-                setResult(200, intent);
-                finish();
-            }
 
         }
     };
+//    private OnClickListener click = new OnClickListener() {
+//
+//        @Override
+//        public void onClick(View v) {
+//            int id = v.getId();
+//            if (id == R.id.button_back) {
+//                finish();
+//            } else if (id == R.id.flash_btn) {
+//                if (!isFlash) {
+//                    CameraManager.get().turnLightOn();
+//                } else {
+//
+//                    CameraManager.get().turnLightOff();
+//                }
+//                isFlash = !isFlash;
+//            } else if (id == R.id.photo_btn) {
+//                // 打开手机中的相册
+//                Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); // "android.intent.action.GET_CONTENT"
+//                innerIntent.setType("image/*");
+//                Intent wrapperIntent = Intent.createChooser(innerIntent, "选择二维码图片");
+//                startActivityForResult(wrapperIntent, REQUEST_CODE);
+//            } else if (id == R.id.qrcode_btn) {
+//                // 跳转到生成二维码页面
+//                Bitmap b = createQRCode();
+//                Intent intent = getIntent();
+//                intent.putExtra("QR_CODE", b);
+//                setResult(200, intent);
+//                finish();
+//            }
+//
+//        }
+//    };
 
     @SuppressWarnings("deprecation")
     @Override
@@ -241,7 +252,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 source = Source.NATIVE_APP_INTENT;
                 decodeFormats = DecodeFormatManager.parseDecodeFormats(intent);
             } else if (dataString != null && dataString.contains(PRODUCT_SEARCH_URL_PREFIX)
-                && dataString.contains(PRODUCT_SEARCH_URL_SUFFIX)) {
+                    && dataString.contains(PRODUCT_SEARCH_URL_SUFFIX)) {
                 // Scan only products and send the result to mobile Product
                 // Search.
                 source = Source.PRODUCT_SEARCH_LINK;
@@ -396,7 +407,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 paint.setStrokeWidth(4.0f);
                 drawLine(canvas, paint, points[0], points[1]);
             } else if (points.length == 4 && (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A))
-                || (rawResult.getBarcodeFormat().equals(BarcodeFormat.EAN_13))) {
+                    || (rawResult.getBarcodeFormat().equals(BarcodeFormat.EAN_13))) {
                 // Hacky special case -- draw two lines, for the barcode and
                 // metadata
                 drawLine(canvas, paint, points[0], points[1]);
@@ -574,7 +585,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         try {
             // 需要引入core包
             QRCodeWriter writer = new QRCodeWriter();
-            String text = Util.getIMEI(this);
+            text = Util.getIMEI(this);
             if (text == null || "".equals(text) || text.length() < 1) {
                 return null;
             }
@@ -605,5 +616,17 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             e.printStackTrace();
         }
         return null;
+    }
+
+    //动态权限获取
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Util.REQUST_CODE) {
+            TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+            text = tm.getDeviceId();
+        }
     }
 }

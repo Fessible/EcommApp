@@ -80,18 +80,16 @@ public class HomeAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
-        ViewHolder mViewHolder = null;
+        ViewHolder mViewHolder = new ViewHolder();
         final RecommendValue value = (RecommendValue) getItem(position);
         View view = convertView;
         if (view == null) {
             switch (type) {
                 case TYPE_VEDIO:
                     view = inflater.inflate(R.layout.item_video_layout, parent, false);
-                    mViewHolder = new ViewHolder(view);
                     break;
                 case TYPE_CARD_MULTI:
                     view = inflater.inflate(R.layout.item_multi_photo, parent, false);
-                    mViewHolder = new ViewHolder(view);
                     mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
                     mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
                     mViewHolder.mZanView = view.findViewById(R.id.item_zan_view);
@@ -101,7 +99,6 @@ public class HomeAdapter extends BaseAdapter {
                     break;
                 case TYPE_CARD:
                     view = inflater.inflate(R.layout.item_single_photo, parent, false);
-                    mViewHolder = new ViewHolder(view);
                     mViewHolder.mProductView = view.findViewById(R.id.product_photo_view);
                     mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
                     mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
@@ -109,7 +106,6 @@ public class HomeAdapter extends BaseAdapter {
                     break;
                 case TYPE_VIEW_PAGER:
                     view = inflater.inflate(R.layout.item_view_pager, parent, false);
-                    mViewHolder = new ViewHolder(view);
                     mViewHolder.mViewPager = view.findViewById(R.id.item_view_pager);
                     break;
             }
@@ -156,9 +152,6 @@ public class HomeAdapter extends BaseAdapter {
 
 
     static class ViewHolder {
-        ViewHolder(View view) {
-            ButterKnife.bind(this, view);
-        }
 
         //所有Card共有属性
 
