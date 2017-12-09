@@ -6,7 +6,7 @@
 
     <Button
         android:id="@+id/button_back"
-        android:layout_width="26dp"
+        android:layout_width="40dp"
         android:layout_height="39dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="15dp"

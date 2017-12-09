@@ -47,9 +47,11 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
+import com.example.com.ecommapp.base.BaseActivity;
 import com.example.com.ecommapp.zxing.camera.CameraManager;
 import com.example.com.ecommapp.zxing.decode.BeepManager;
 import com.example.com.ecommapp.zxing.decode.CaptureActivityHandler;
@@ -80,6 +82,10 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * The barcode reader activity itself. This is loosely based on the
@@ -115,11 +121,17 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     }
 
     private CaptureActivityHandler handler;
-    private ViewfinderView viewfinderView;
-    private Button mButtonBack;
-    private Button createBtn;
-    private Button photoBtn;
-    private Button flashBtn;
+
+    @BindView(R.id.viewfinder_view)
+    ViewfinderView viewfinderView;
+
+    @BindView(R.id.preview_view)
+    SurfaceView surfaceView;
+
+    @BindView(R.id.txt_flash)
+    TextView txtFlash;
+
+    SurfaceHolder surfaceHolder;
 
     private Result lastResult;
     private boolean hasSurface;
@@ -152,20 +164,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_qcord_capture_layout);
 
+        ButterKnife.bind(this);
         Util.currentActivity = this;
         CameraManager.init(getApplication());
-        viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
 
-        mButtonBack = (Button) findViewById(R.id.button_back);
-        mButtonBack.setOnClickListener(click);
-        createBtn = (Button) findViewById(R.id.qrcode_btn);
-        createBtn.setOnClickListener(click);
-        photoBtn = (Button) findViewById(R.id.photo_btn);
-        photoBtn.setOnClickListener(click);
-        flashBtn = (Button) findViewById(R.id.flash_btn);
-        flashBtn.setOnClickListener(click);
-
-        surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -181,18 +183,41 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         // showHelpOnFirstLaunch();
     }
 
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
 
-    /**
-     * 闪光灯点击事件
-     */
-    private OnClickListener click = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    @OnClick(R.id.button_back)
+    public void onBack(View view) {
+        finish();
+    }
 
+    @BindView(R.id.flash_btn)
+    Button btnFlash;
+
+    //打开闪光灯
+    @OnClick(R.id.flash_btn)
+    public void openFlash(View view) {
+        if (!isFlash) {
+            CameraManager.get().turnLightOn();
+            txtFlash.setText(getString(R.string.qrcode_flash_close));
+            btnFlash.setSelected(true);
+        } else {
+            CameraManager.get().turnLightOff();
+            txtFlash.setText(getString(R.string.qrcode_flash_open));
+            btnFlash.setSelected(false);
         }
-    };
+        isFlash = !isFlash;
+    }
+
+    @OnClick(R.id.photo_btn)
+    public void openPhoto(View view) {
+
+    }
+
+    @OnClick(R.id.qrcode_btn)
+    public void createQrcode(View view) {
+
+    }
+
+
 //    private OnClickListener click = new OnClickListener() {
 //
 //        @Override
@@ -229,6 +254,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     @SuppressWarnings("deprecation")
     @Override
     protected void onResume() {
+
         super.onResume();
         resetStatusView();
         if (hasSurface) {
