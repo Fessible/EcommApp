@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.com.ecommapp.zxing.decode;
+package com.example.com.ecommapp.zxing.app.decode;
 
 import android.content.Intent;
 import android.net.Uri;

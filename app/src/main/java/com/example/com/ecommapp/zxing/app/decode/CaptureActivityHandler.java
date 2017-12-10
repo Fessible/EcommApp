@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.com.ecommapp.zxing.decode;
 
+package com.example.com.ecommapp.zxing.app.decode;
 
 import android.app.Activity;
 import android.content.Intent;

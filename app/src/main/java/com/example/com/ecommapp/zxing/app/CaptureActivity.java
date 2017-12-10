@@ -51,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
+import com.example.com.ecommapp.activity.QrcodeActivity;
 import com.example.com.ecommapp.base.BaseActivity;
 import com.example.com.ecommapp.zxing.camera.CameraManager;
 import com.example.com.ecommapp.zxing.decode.BeepManager;
@@ -107,6 +108,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private static final String RETURN_URL_PARAM = "ret";
     private String text;
     private static final Set<ResultMetadataType> DISPLAYABLE_METADATA_TYPES;
+    //图片返回码
+    private static final int IMG_REQUEST = 1;
+    //解析内容标识
+    public static final String RESULT = "RESULT";
+    public static final String QRCODE = "QR_CODE";
 
     static {
         DISPLAYABLE_METADATA_TYPES = new HashSet<ResultMetadataType>(5);
@@ -156,8 +162,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     public void onCreate(Bundle icicle) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(icicle);
 
         Window window = getWindow();
@@ -209,47 +215,58 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @OnClick(R.id.photo_btn)
     public void openPhoto(View view) {
-
+        Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        innerIntent.setType("image/*");
+        Intent wrapIntent = Intent.createChooser(innerIntent, getString(R.string.qrcode_photo_chose));
+        startActivityForResult(wrapIntent, IMG_REQUEST);
     }
 
     @OnClick(R.id.qrcode_btn)
     public void createQrcode(View view) {
-
-    }
-
-
-//    private OnClickListener click = new OnClickListener() {
-//
-//        @Override
-//        public void onClick(View v) {
-//            int id = v.getId();
-//            if (id == R.id.button_back) {
-//                finish();
-//            } else if (id == R.id.flash_btn) {
-//                if (!isFlash) {
-//                    CameraManager.get().turnLightOn();
-//                } else {
-//
-//                    CameraManager.get().turnLightOff();
-//                }
-//                isFlash = !isFlash;
-//            } else if (id == R.id.photo_btn) {
-//                // 打开手机中的相册
-//                Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); // "android.intent.action.GET_CONTENT"
-//                innerIntent.setType("image/*");
-//                Intent wrapperIntent = Intent.createChooser(innerIntent, "选择二维码图片");
-//                startActivityForResult(wrapperIntent, REQUEST_CODE);
-//            } else if (id == R.id.qrcode_btn) {
-//                // 跳转到生成二维码页面
-//                Bitmap b = createQRCode();
+        Bitmap b = createQRCode();
+        Intent intent = new Intent(this, QrcodeActivity.class);
+        intent.putExtra(QRCODE, b);
+        startActivity(intent);
+        finish();
 //                Intent intent = getIntent();
 //                intent.putExtra("QR_CODE", b);
-//                setResult(200, intent);
-//                finish();
-//            }
-//
-//        }
-//    };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == IMG_REQUEST) {
+                uri = data.getData();//获取到数据
+                //开启线程解析数据
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Result result = scanningImage(uri);
+                        if (result == null) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), getString(R.string.qrcode_parse_err), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            //处理扫描结果
+                            String code = result.toString();
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            Uri content_url = Uri.parse("code");
+                            intent.setData(content_url);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                }).start();
+            }
+
+        }
+
+    }
 
     @SuppressWarnings("deprecation")
     @Override
@@ -556,33 +573,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     private Uri uri;
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            uri = data.getData();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
 
-                    Result result = scanningImage(uri);
-                    if (result == null) {
-                        Looper.prepare();
-                        Toast.makeText(getApplicationContext(), "图片格式有误", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    } else {
-                        // 数据返回，在这里去处理扫码结果
-                        String recode = (result.toString());
-                        Intent data = new Intent();
-                        data.putExtra("result", recode);
-                        setResult(300, data);
-                        finish();
-                    }
-                }
-            }).start();
-        }
-    }
-
+    //扫描二维码，并解析
     protected Result scanningImage(Uri path) {
         if (path == null || path.equals("")) {
             return null;
@@ -591,7 +583,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         Hashtable<DecodeHintType, String> hints = new Hashtable<DecodeHintType, String>();
         hints.put(DecodeHintType.CHARACTER_SET, "utf-8"); // 设置二维码内容的编码
         try {
-            Bitmap scanBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+            Bitmap scanBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(path));
 
             RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
             BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
@@ -604,9 +596,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         return null;
     }
 
+    /**
+     * 创建二维码
+     *
+     * @return
+     */
     private Bitmap createQRCode() {
-        int QR_WIDTH = 100;
-        int QR_HEIGHT = 100;
+        int QR_WIDTH = 300;
+        int QR_HEIGHT = 300;
 
         try {
             // 需要引入core包

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.com.ecommapp.zxing.encode;
+package com.example.com.ecommapp.zxing.app.encode;
 
 import android.app.Activity;
 import android.content.Intent;

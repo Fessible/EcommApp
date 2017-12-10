@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.com.ecommapp.zxing.decode;
+package com.example.com.ecommapp.zxing.app.decode;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,12 +25,14 @@ import android.util.Log;
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.zxing.app.CaptureActivity;
 import com.example.com.ecommapp.zxing.camera.CameraManager;
+import com.example.com.ecommapp.zxing.decode.*;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
 
 import java.util.Hashtable;
 
@@ -87,7 +89,7 @@ final class DecodeHandler extends Handler
 		height = tmp;
 		data = rotatedData;
 		/***********************�޸�Ϊ��������******************************/
-		PlanarYUVLuminanceSource source = CameraManager.get().buildLuminanceSource(data, width, height);
+		com.example.com.ecommapp.zxing.decode.PlanarYUVLuminanceSource source = CameraManager.get().buildLuminanceSource(data, width, height);
 		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 		try
 		{

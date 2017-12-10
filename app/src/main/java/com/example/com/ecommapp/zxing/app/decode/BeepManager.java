@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.com.ecommapp.zxing.decode;
-
+package com.example.com.ecommapp.zxing.app.decode;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,7 +33,7 @@ import java.io.IOException;
 
 
 /**
- * Manages beeps and vibrations for {@link CaptureActivity}.
+ * Manages beeps and vibrations for {@link }.
  */
 public final class BeepManager {
 

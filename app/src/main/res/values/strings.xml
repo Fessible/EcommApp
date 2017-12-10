@@ -214,6 +214,10 @@
     <string name="wifi_changing_network">Requesting connection to network\u2026</string>
     <string name="qrcode_flash_open">开灯</string>
     <string name="qrcode_flash_close">关灯</string>
+    <string name="qrcode_photo_chose">选择二维码图片</string>
+    <string name="qrcode_parse_err">图片格式有误</string>
+    <string name="qrcode_scan">扫一扫</string>
+    <string name="qrcode_me">我的二维码</string>
 
 
 </resources>

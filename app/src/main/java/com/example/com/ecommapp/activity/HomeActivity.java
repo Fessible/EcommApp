@@ -16,14 +16,18 @@ import com.example.com.ecommapp.view.home.fragment.HomeFragment;
 public class HomeActivity extends BaseActivity {
     private FragmentManager fm;
     private HomeFragment mHomeFragment;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_layout);
+    protected void onViewCreated(Bundle savedInstanceState) {
         mHomeFragment = new HomeFragment();
         fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.content_layout, mHomeFragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected int getActivityResId() {
+        return R.layout.activity_home_layout;
     }
 }
