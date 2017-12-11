@@ -399,5 +399,4 @@ final class QRCodeEncoder {
         }
         return result.toString();
     }
-
 }

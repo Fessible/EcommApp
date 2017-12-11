@@ -115,6 +115,7 @@ final class DecodeHandler extends Handler
 			message.setData(bundle);
 			 Log.d(TAG, "Sending decode succeeded message...");
 			message.sendToTarget();
+
 			//扫描成功后跳转到浏览器
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");

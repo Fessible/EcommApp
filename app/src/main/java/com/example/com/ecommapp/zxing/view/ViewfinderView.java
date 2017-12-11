@@ -20,8 +20,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -46,6 +48,8 @@ public final class ViewfinderView extends View {
     private static final int CURRENT_POINT_OPACITY = 0xA0;
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
+    private static final float TEXT_SIZE = 12;
+    private static final int TEXT_PADDING_TOP = 20;
 
     private CameraManager cameraManager;
     private final Paint paint;
@@ -222,6 +226,20 @@ public final class ViewfinderView extends View {
 //                    frame.top - POINT_SIZE,
 //                    frame.right + POINT_SIZE,
 //                    frame.bottom + POINT_SIZE);
+        //绘制文字
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(TEXT_SIZE * density);
+        paint.setAlpha(0x40);
+        paint.setTypeface(Typeface.create("System", Typeface.BOLD));
+        String text = getResources().getString(R.string.scan_text);
+        float textWidth = paint.measureText(text);
+
+        canvas.drawText(
+                text,
+                (width - textWidth) / 2,
+                (float) (frame.bottom + (float) TEXT_PADDING_TOP * density),
+                paint);
+
         //刷新局部内容
         postInvalidateDelayed(ANIMATION_DELAY,
                 frame.left,

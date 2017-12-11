@@ -24,9 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -40,7 +38,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
@@ -67,11 +64,8 @@ import com.example.com.ecommapp.zxing.util.Util;
 import com.example.com.ecommapp.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
-import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.FormatException;
-import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
@@ -81,7 +75,6 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -241,8 +234,6 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         intent.putExtra(QRCODE, b);
         startActivity(intent);
         finish();
-//                Intent intent = getIntent();
-//                intent.putExtra("QR_CODE", b);
     }
 
     private Intent data;
@@ -264,14 +255,6 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
     }
 
     private void parsePhoto(final Intent data) {
-//        final Uri uri = data.getData(); //获取系统返回的照片的Uri
-//        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//        Cursor cursor = getContentResolver().query(uri,
-//                filePathColumn, null, null, null);//从系统表中查询指定Uri对应的照片
-//        cursor.moveToFirst();
-//        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//        final String picturePath = cursor.getString(columnIndex);  //获取照片路径
-//        cursor.close();
 
         final Uri originalUri = data.getData();
         //开启线程解析数据
@@ -681,11 +664,8 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
             TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
             text = tm.getDeviceId();
         }
-
         if (requestCode == READ_IMG) {
             parsePhoto(data);
         }
     }
-
-
 }
