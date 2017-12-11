@@ -16,6 +16,8 @@
 
 package com.example.com.ecommapp.zxing.decode;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -75,7 +77,6 @@ final class DecodeHandler extends Handler
 	{
 		long start = System.currentTimeMillis();
 		Result rawResult = null;
-		/***********************�޸�Ϊ������ʼ******************************/
 		byte[] rotatedData = new byte[data.length];
 		for (int y = 0; y < height; y++)
 		{
@@ -86,11 +87,13 @@ final class DecodeHandler extends Handler
 		width = height;
 		height = tmp;
 		data = rotatedData;
-		/***********************�޸�Ϊ��������******************************/
+		// 构造基于平面的YUV亮度源，即包含二维码区域的数据源
 		PlanarYUVLuminanceSource source = CameraManager.get().buildLuminanceSource(data, width, height);
+		// 构造二值图像比特流，使用HybridBinarizer算法解析数据源
 		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 		try
 		{
+			//解析结果
 			rawResult = multiFormatReader.decodeWithState(bitmap);
 		}
 		catch (ReaderException re)
@@ -110,8 +113,14 @@ final class DecodeHandler extends Handler
 			Bundle bundle = new Bundle();
 			bundle.putParcelable(DecodeThread.BARCODE_BITMAP, source.renderCroppedGreyscaleBitmap());
 			message.setData(bundle);
-			// Log.d(TAG, "Sending decode succeeded message...");
+			 Log.d(TAG, "Sending decode succeeded message...");
 			message.sendToTarget();
+			//扫描成功后跳转到浏览器
+			Intent intent = new Intent();
+			intent.setAction("android.intent.action.VIEW");
+			Uri content_url = Uri.parse(rawResult.toString());
+			intent.setData(content_url);
+			activity.startActivity(intent);
 		}
 		else
 		{

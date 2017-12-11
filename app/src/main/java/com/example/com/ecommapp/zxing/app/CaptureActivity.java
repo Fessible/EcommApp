@@ -38,6 +38,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
@@ -65,8 +66,11 @@ import com.example.com.ecommapp.zxing.util.Util;
 import com.example.com.ecommapp.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.FormatException;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
@@ -238,11 +242,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         if (resultCode == RESULT_OK) {
             if (requestCode == IMG_REQUEST) {
                 uri = data.getData();//获取到数据
+                final String path = uri.getPath();
                 //开启线程解析数据
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Result result = scanningImage(uri);
+                        Result result = scanningImage(path);
                         if (result == null) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -255,7 +260,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                             String code = result.toString();
                             Intent intent = new Intent();
                             intent.setAction("android.intent.action.VIEW");
-                            Uri content_url = Uri.parse("code");
+                            Uri content_url = Uri.parse(code);
                             intent.setData(content_url);
                             startActivity(intent);
                             finish();
@@ -573,28 +578,75 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     private Uri uri;
 
+    protected Result scanningImage(String path) {
+        if (TextUtils.isEmpty(path)) {
 
-    //扫描二维码，并解析
-    protected Result scanningImage(Uri path) {
-        if (path == null || path.equals("")) {
             return null;
+
         }
         // DecodeHintType 和EncodeHintType
         Hashtable<DecodeHintType, String> hints = new Hashtable<DecodeHintType, String>();
         hints.put(DecodeHintType.CHARACTER_SET, "utf-8"); // 设置二维码内容的编码
-        try {
-            Bitmap scanBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(path));
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true; // 先获取原大小
+        Bitmap scanBitmap = BitmapFactory.decodeFile(path, options);
+        options.inJustDecodeBounds = false; // 获取新的大小
 
-            RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
-            BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-            QRCodeReader reader = new QRCodeReader();
+        int sampleSize = (int) (options.outHeight / (float) 200);
+
+        if (sampleSize <= 0)
+            sampleSize = 1;
+        options.inSampleSize = sampleSize;
+        scanBitmap = BitmapFactory.decodeFile(path, options);
+        if (scanBitmap == null) {
+            return null;
+        }
+
+        RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
+        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
+        QRCodeReader reader = new QRCodeReader();
+        try {
+
             return reader.decode(bitmap1, hints);
 
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
+
             e.printStackTrace();
+
+        } catch (ChecksumException e) {
+
+            e.printStackTrace();
+
+        } catch (FormatException e) {
+
+            e.printStackTrace();
+
         }
+
         return null;
+
     }
+//    //扫描二维码，并解析
+//    protected Result scanningImage(Uri path) {
+//        if (path == null || path.equals("")) {
+//            return null;
+//        }
+//        // DecodeHintType 和EncodeHintType
+//        Hashtable<DecodeHintType, String> hints = new Hashtable<DecodeHintType, String>();
+//        hints.put(DecodeHintType.CHARACTER_SET, "utf-8"); // 设置二维码内容的编码
+//        try {
+//            Bitmap scanBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(path));
+//
+//            RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
+//            BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
+//            QRCodeReader reader = new QRCodeReader();
+//            return reader.decode(bitmap1, hints);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     /**
      * 创建二维码
