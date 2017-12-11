@@ -239,6 +239,7 @@ public final class CameraManager {
      * 设置扫描框的大小
      */
     public Rect getFramingRect() {
+        //获取屏幕的尺寸像素
         Point screenResolution = configManager.getScreenResolution();
         if (framingRect == null) {
             if (camera == null) {
@@ -256,6 +257,7 @@ public final class CameraManager {
             } else if (height > MAX_FRAME_HEIGHT) {
                 height = MAX_FRAME_HEIGHT;
             }
+            //取屏幕中间的，宽为width，高为height的矩形框
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2;
             framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
@@ -271,25 +273,11 @@ public final class CameraManager {
      */
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
+            //获取相机分辨率和屏幕分辨率
             Rect rect = new Rect(getFramingRect());
             Point cameraResolution = configManager.getCameraResolution();
             Point screenResolution = configManager.getScreenResolution();
-            /*********************** �޸�Ϊ������ʼ ******************************/
-            // rect.left = rect.left * cameraResolution.x / screenResolution.x;
-            // rect.right = rect.right * cameraResolution.x /
-            // screenResolution.x;
-            // rect.top = rect.top * cameraResolution.y / screenResolution.y;
-            // rect.bottom = rect.bottom * cameraResolution.y /
-            // screenResolution.y;
-            /*********************** �޸�Ϊ�������� ******************************/
-            /*********************** �޸�Ϊ������ʼ ******************************/
-            // rect.left = rect.left * cameraResolution.y / screenResolution.x;
-            // rect.right = rect.right * cameraResolution.y /
-            // screenResolution.x;
-            // rect.top = rect.top * cameraResolution.x / screenResolution.y;
-            // rect.bottom = rect.bottom * cameraResolution.x /
-            // screenResolution.y;
-            /*********************** �޸�Ϊ�������� ******************************/
+            //根据相机分辨率和屏幕分辨率的比例对屏幕中央聚焦框进行调整
             rect.left = rect.left * cameraResolution.y / screenResolution.x;
             rect.right = rect.right * cameraResolution.y / screenResolution.x;
             rect.top = rect.top * cameraResolution.x / screenResolution.y;

@@ -27,8 +27,8 @@ import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 
 import com.example.com.ecommapp.R;
-import com.example.com.ecommapp.zxing.app.decode.Intents;
 import com.example.com.ecommapp.zxing.decode.Contents;
+import com.example.com.ecommapp.zxing.decode.Intents;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;

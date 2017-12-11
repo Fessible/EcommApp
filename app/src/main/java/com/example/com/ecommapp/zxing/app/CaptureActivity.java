@@ -18,12 +18,13 @@ package com.example.com.ecommapp.zxing.app;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -32,11 +33,12 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,16 +46,15 @@ import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.activity.QrcodeActivity;
-import com.example.com.ecommapp.base.BaseActivity;
 import com.example.com.ecommapp.zxing.camera.CameraManager;
 import com.example.com.ecommapp.zxing.decode.BeepManager;
 import com.example.com.ecommapp.zxing.decode.CaptureActivityHandler;
@@ -80,7 +81,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -99,7 +100,7 @@ import butterknife.OnClick;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -118,6 +119,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     public static final String RESULT = "RESULT";
     public static final String QRCODE = "QR_CODE";
 
+    private Bitmap scanBitmap;
+
+    //动态权限
+    public static final int READ_IMG = 1;
+
     static {
         DISPLAYABLE_METADATA_TYPES = new HashSet<ResultMetadataType>(5);
         DISPLAYABLE_METADATA_TYPES.add(ResultMetadataType.ISSUE_NUMBER);
@@ -131,6 +137,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     }
 
     private CaptureActivityHandler handler;
+    @BindView(R.id.imgview)
+    ImageView imageView;
 
     @BindView(R.id.viewfinder_view)
     ViewfinderView viewfinderView;
@@ -153,6 +161,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
     private boolean isFlash = false;
+    private Uri uri;
 
     private int REQUEST_CODE = 3;
 
@@ -163,6 +172,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     public Handler getHandler() {
         return handler;
     }
+
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -189,7 +199,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
-
         // showHelpOnFirstLaunch();
     }
 
@@ -236,41 +245,59 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 //                intent.putExtra("QR_CODE", b);
     }
 
+    private Intent data;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == IMG_REQUEST) {
-                uri = data.getData();//获取到数据
-                final String path = uri.getPath();
-                //开启线程解析数据
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Result result = scanningImage(path);
-                        if (result == null) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(), getString(R.string.qrcode_parse_err), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            //处理扫描结果
-                            String code = result.toString();
-                            Intent intent = new Intent();
-                            intent.setAction("android.intent.action.VIEW");
-                            Uri content_url = Uri.parse(code);
-                            intent.setData(content_url);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                }).start();
+                this.data = data;
+                //动态申请读写相册图片权限
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_IMG);
+                } else {
+                    parsePhoto(data);
+                }
             }
-
         }
+    }
 
+    private void parsePhoto(final Intent data) {
+//        final Uri uri = data.getData(); //获取系统返回的照片的Uri
+//        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//        Cursor cursor = getContentResolver().query(uri,
+//                filePathColumn, null, null, null);//从系统表中查询指定Uri对应的照片
+//        cursor.moveToFirst();
+//        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//        final String picturePath = cursor.getString(columnIndex);  //获取照片路径
+//        cursor.close();
+
+        final Uri originalUri = data.getData();
+        //开启线程解析数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Result result = scanningImage(originalUri);
+                if (result == null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), getString(R.string.qrcode_parse_err), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    //处理扫描结果
+                    String code = result.toString();
+                    Intent intent = new Intent();
+                    intent.setAction("android.intent.action.VIEW");
+                    Uri content_url = Uri.parse(code);
+                    intent.setData(content_url);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        }).start();
     }
 
     @SuppressWarnings("deprecation")
@@ -344,6 +371,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     @Override
     protected void onDestroy() {
         inactivityTimer.shutdown();
+
         super.onDestroy();
     }
 
@@ -576,77 +604,28 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         viewfinderView.drawViewfinder();
     }
 
-    private Uri uri;
-
-    protected Result scanningImage(String path) {
-        if (TextUtils.isEmpty(path)) {
-
+    //扫描二维码，并解析
+    protected Result scanningImage(Uri path) {
+        if (path == null || path.equals("")) {
             return null;
-
         }
+        ContentResolver resolver = getContentResolver();
         // DecodeHintType 和EncodeHintType
         Hashtable<DecodeHintType, String> hints = new Hashtable<DecodeHintType, String>();
         hints.put(DecodeHintType.CHARACTER_SET, "utf-8"); // 设置二维码内容的编码
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true; // 先获取原大小
-        Bitmap scanBitmap = BitmapFactory.decodeFile(path, options);
-        options.inJustDecodeBounds = false; // 获取新的大小
-
-        int sampleSize = (int) (options.outHeight / (float) 200);
-
-        if (sampleSize <= 0)
-            sampleSize = 1;
-        options.inSampleSize = sampleSize;
-        scanBitmap = BitmapFactory.decodeFile(path, options);
-        if (scanBitmap == null) {
-            return null;
-        }
-
-        RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
-        BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-        QRCodeReader reader = new QRCodeReader();
         try {
-
+            //将相册中的内容解析为Bitmap
+            scanBitmap = MediaStore.Images.Media.getBitmap(resolver, path);
+            RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
+            BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
+            QRCodeReader reader = new QRCodeReader();
             return reader.decode(bitmap1, hints);
 
-        } catch (NotFoundException e) {
-
+        } catch (Exception e) {
             e.printStackTrace();
-
-        } catch (ChecksumException e) {
-
-            e.printStackTrace();
-
-        } catch (FormatException e) {
-
-            e.printStackTrace();
-
         }
-
         return null;
-
     }
-//    //扫描二维码，并解析
-//    protected Result scanningImage(Uri path) {
-//        if (path == null || path.equals("")) {
-//            return null;
-//        }
-//        // DecodeHintType 和EncodeHintType
-//        Hashtable<DecodeHintType, String> hints = new Hashtable<DecodeHintType, String>();
-//        hints.put(DecodeHintType.CHARACTER_SET, "utf-8"); // 设置二维码内容的编码
-//        try {
-//            Bitmap scanBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(path));
-//
-//            RGBLuminanceSource source = new RGBLuminanceSource(scanBitmap);
-//            BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
-//            QRCodeReader reader = new QRCodeReader();
-//            return reader.decode(bitmap1, hints);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
 
     /**
      * 创建二维码
@@ -694,7 +673,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     }
 
     //动态权限获取
-
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -703,5 +681,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
             text = tm.getDeviceId();
         }
+
+        if (requestCode == READ_IMG) {
+            parsePhoto(data);
+        }
     }
+
+
 }
