@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/color_white"
->
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/item_logo_view"
@@ -14,7 +14,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/default_user_avatar"
-    />
+        />
 
     <TextView
         android:id="@+id/item_title_view"
@@ -35,7 +35,7 @@
         android:layout_alignTop="@id/item_title_view"
         android:layout_marginRight="15dp"
         android:background="@drawable/trade_share"
-    />
+        />
 
     <TextView
         android:id="@+id/item_info_view"
@@ -46,14 +46,14 @@
         android:text="@string/video"
         android:textColor="@color/result_view"
         android:textSize="16sp"
-    />
+        />
 
     <RelativeLayout
         android:id="@+id/video_ad_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_logo_view"
-    />
+        />
 
     <TextView
         android:id="@+id/item_footer_view"

@@ -87,6 +87,9 @@ public class HomeAdapter extends BaseAdapter {
             switch (type) {
                 case TYPE_VEDIO:
                     view = inflater.inflate(R.layout.item_video_layout, parent, false);
+                    mViewHolder.mVieoContentLayout = (RelativeLayout)
+                            view.findViewById(R.id.video_ad_layout);
+                    mViewHolder.mShareView = (ImageView) view.findViewById(R.id.item_share_view);
                     break;
                 case TYPE_CARD_MULTI:
                     view = inflater.inflate(R.layout.item_multi_photo, parent, false);
