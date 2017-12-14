@@ -1,9 +1,7 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/color_white"
-    >
+    android:background="@color/color_white">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/item_logo_view"
@@ -13,8 +11,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/default_user_avatar"
-        />
+        android:background="@drawable/default_user_avatar" />
 
     <TextView
         android:id="@+id/item_title_view"
@@ -25,7 +22,7 @@
         android:text="微微一笑很优酷"
         android:textColor="@color/color_333333"
         android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/item_share_view"
@@ -34,8 +31,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/item_title_view"
         android:layout_marginRight="15dp"
-        android:background="@drawable/trade_share"
-        />
+        android:background="@drawable/trade_share" />
 
     <TextView
         android:id="@+id/item_info_view"
@@ -45,15 +41,18 @@
         android:layout_toRightOf="@id/item_logo_view"
         android:text="@string/video"
         android:textColor="@color/result_view"
-        android:textSize="16sp"
-        />
+        android:textSize="16sp" />
 
     <RelativeLayout
         android:id="@+id/video_ad_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/item_logo_view"
-        />
+        android:layout_below="@id/item_logo_view" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/item_footer_view"
@@ -66,6 +65,6 @@
         android:paddingRight="15dp"
         android:text="杨洋郑爽“聊”破次元盛,甜蜜演绎《微微一笑很优酷》优酷独家热播中"
         android:textColor="@color/color_333333"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 </RelativeLayout>
 
