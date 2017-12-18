@@ -3,6 +3,7 @@ package com.example.com.ecommapp.view.home.fragment;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.base.BaseFragment;
 
 /**
@@ -12,7 +13,7 @@ import com.example.com.ecommapp.base.BaseFragment;
 public class MessageFragment extends BaseFragment {
     @Override
     protected int getFragmentLayout() {
-        return 0;
+        return R.layout.fragment_message_layout;
     }
 
     @Override

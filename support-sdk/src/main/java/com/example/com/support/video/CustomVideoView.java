@@ -42,6 +42,8 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     private static final int STATE_PLAYING = 1;
     private static final int STATE_PAUSING = 2;
     private static final int LOAD_TOTAL_COUNT = 3;//三个线程加载视频
+    private String url;
+    private int currentCount;//当前加载的次数
 
     private ViewGroup mParentContainer;
     private RelativeLayout mPlayerView;
@@ -104,6 +106,10 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
 
     }
 
+    public void setDataSource(String url) {
+        this.url = url;
+    }
+
     /**
      * 注册广播
      */
@@ -131,7 +137,9 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         showLoadingView();
         try {
             setCurrentState(STATE_IDLE);
-            checkMediaPlayer();
+            checkMediaPlayer();//完成播放器的创建工作
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepareAsync();//异步加载视频
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -202,7 +210,39 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     public void resume() {
     }
 
+    /**
+     * 清空mediaplayer，并重启load
+     */
     public void stop() {
+        if (mediaPlayer != null) {
+            mediaPlayer.reset();
+            mediaPlayer.setOnSeekCompleteListener(null);
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        setCurrentState(STATE_IDLE);
+        //重新加载视频
+        if (currentCount < LOAD_TOTAL_COUNT) {
+            currentCount += 1;
+            load();
+        } else {//停止重试
+            showPauseView(true);//显示暂停
+        }
+
+    }
+
+    private void showPauseView(boolean isPause) {
+        imgEnlarge.setVisibility(isPause ? GONE: VISIBLE);
+        imgLoading.setVisibility(GONE);
+        imgLoading.clearAnimation();
+        btnPlay.setVisibility(isPause ? VISIBLE : GONE);
+        if (isPause) {
+            imgFrame.setVisibility(VISIBLE);
+            loadFrameImg();
+        } else {
+            imgFrame.setVisibility(GONE);
+        }
     }
 
 

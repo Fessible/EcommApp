@@ -6,15 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.adapter.HomeAdapter;
+import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.module.recommand.RecommendModel;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
 import com.example.com.ecommapp.network.http.HttpRequest;
-import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.zxing.app.CaptureActivity;
 import com.example.com.support.okhttp.listener.DisposeListener;
 
@@ -28,9 +29,8 @@ import butterknife.OnClick;
  * Created by rhm on 2017/10/31.
  */
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment  {
     private final static String TAG = "HomeFragment";
-
     @BindView(R.id.category_view)
     TextView txtCategory;
 
@@ -45,6 +45,11 @@ public class HomeFragment extends BaseFragment {
 
     @BindView(R.id.search_view)
     TextView txtSearch;
+
+    private RadioGroup radioGroup;
+    private RadioButton rbHome;
+    private RadioButton rbMessage;
+    private RadioButton rbMine;
 
     private HomeAdapter adapter;
     private RecommendModel recommendModel;
