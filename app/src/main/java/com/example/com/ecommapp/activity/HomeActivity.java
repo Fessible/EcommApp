@@ -9,9 +9,9 @@ import android.widget.RadioGroup;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.base.BaseActivity;
-import com.example.com.ecommapp.view.home.fragment.HomeFragment;
-import com.example.com.ecommapp.view.home.fragment.MessageFragment;
-import com.example.com.ecommapp.view.home.fragment.MineFragment;
+import com.example.com.ecommapp.fragment.HomeFragment;
+import com.example.com.ecommapp.fragment.MessageFragment;
+import com.example.com.ecommapp.fragment.MineFragment;
 
 import butterknife.BindView;
 
@@ -61,7 +61,6 @@ public class HomeActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         mIndex = HOME_INDEX;
     }
 
-
     @Override
     protected int getActivityResId() {
         return R.layout.activity_home_layout;
@@ -92,13 +91,12 @@ public class HomeActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         fragmentTransaction.hide(mFragments[mIndex]);//隐藏上一个位置的内容
 
         if (!mFragments[index].isAdded()) {//未添加则添加到事务中
-            fragmentTransaction.add(R.id.content_layout, mFragments[index]).show(mFragments[index]);
-        } else {//直接显示
+//            fragmentTransaction.add(R.id.content_layout, mFragments[index]).show(mFragments[index]);
+            fragmentTransaction.add(R.id.content_layout, mFragments[index]);
+        } else {//已被添加到事务中，直接显示
             fragmentTransaction.show(mFragments[index]);
         }
         fragmentTransaction.commit();
         mIndex = index;
     }
-
-
 }

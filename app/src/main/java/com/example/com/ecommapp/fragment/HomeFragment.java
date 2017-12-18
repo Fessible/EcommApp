@@ -1,4 +1,4 @@
-package com.example.com.ecommapp.view.home.fragment;
+package com.example.com.ecommapp.fragment;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;

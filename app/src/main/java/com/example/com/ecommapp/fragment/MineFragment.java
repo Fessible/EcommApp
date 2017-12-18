@@ -1,4 +1,4 @@
-package com.example.com.ecommapp.view.home.fragment;
+package com.example.com.ecommapp.fragment;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,10 +10,10 @@ import com.example.com.ecommapp.base.BaseFragment;
  * Created by rhm on 2017/10/31.
  */
 
-public class MessageFragment extends BaseFragment {
+public class MineFragment extends BaseFragment{
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_message_layout;
+        return R.layout.fragment_mine_layout;
     }
 
     @Override
