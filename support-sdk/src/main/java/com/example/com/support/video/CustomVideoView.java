@@ -56,7 +56,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     private AudioManager audioManager;
     private Surface videoSurface;
     private MediaPlayer mediaPlayer;//视频播放器
-    private ScreenEventReceiver screenEventReceiver;//监听锁屏事件
+    private ScreenEventReceiver screenEventReceiver;//锁屏广播接收器
 
 
     //状态
@@ -198,19 +198,6 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     }
 
     /**
-     * 暂停视频
-     */
-    public void pause() {
-
-    }
-
-    /**
-     * 恢复视频
-     */
-    public void resume() {
-    }
-
-    /**
      * 清空mediaplayer，并重启load
      */
     public void stop() {
@@ -233,7 +220,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     }
 
     private void showPauseView(boolean isPause) {
-        imgEnlarge.setVisibility(isPause ? GONE: VISIBLE);
+        imgEnlarge.setVisibility(isPause ? GONE : VISIBLE);
         imgLoading.setVisibility(GONE);
         imgLoading.clearAnimation();
         btnPlay.setVisibility(isPause ? VISIBLE : GONE);
@@ -280,7 +267,53 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
      */
     @Override
     public void onPrepared(MediaPlayer mp) {
+        mediaPlayer = mp;
+        if (mediaPlayer != null) {
+            mediaPlayer.setOnBufferingUpdateListener(this);
+            currentCount = 0;//重试次数设为0
+            //listener回调loadSuccess
+            //准备好后，根据具体条件判断是否可播放
+            decideCanplay();
+        }
+    }
 
+    /**
+     * 1.是否大于视频播放屏幕的50%
+     * 2.是否和用户设置的网络状态一致
+     */
+    private void decideCanplay() {
+        if (true) {
+            resume();
+        } else {
+            pause();
+        }
+    }
+
+
+
+    /**
+     * 播放视频
+     */
+    public void resume() {
+        //不为暂停状态直接返回
+        if (playerState != STATE_PAUSING) {
+            return;
+        }
+        if (!isPlaying()) {
+            mediaPlayer.start();
+            setCurrentState(STATE_PLAYING);//更新状态
+
+
+        }
+
+
+    }
+
+    private boolean isPlaying(){
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -293,14 +326,45 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
      */
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        return false;
+        setCurrentState(STATE_ERROR);
+        if (currentCount >= LOAD_TOTAL_COUNT) {
+            //失败回调
+            showPauseView(true);
+        }
+        stop();//清空内容
+        return true;//表示用户自己处理，false表示系统处理
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        //成功回调
+        //回到初始状态
+        playBack();
     }
 
+    private void playBack() {
+        setCurrentState(STATE_PAUSING);
+        if (mediaPlayer != null) {
+            mediaPlayer.setOnSeekCompleteListener(null);
+            mediaPlayer.seekTo(0);
+            mediaPlayer.pause();
+        }
+        showPauseView(true);
+    }
+
+    /**
+     * 暂停视频
+     */
+    public void pause() {
+        if (playerState != STATE_PAUSING) {
+            return;
+        }
+        setCurrentState(STATE_PAUSING);
+        if (isPlaying()) {
+            mediaPlayer.pause();
+        }
+        showPauseView(true);
+    }
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
 
@@ -308,6 +372,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
 
     /**
      * 表明我们的TextureView可用
+     * 在Surface可用时，load我们的视频
      *
      * @param surface
      * @param width
@@ -315,7 +380,8 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
      */
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-
+        videoSurface = new Surface(surface);
+        load();
     }
 
     @Override
