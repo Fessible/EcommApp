@@ -3,6 +3,7 @@ package com.example.com.ecommapp.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.adapter.PhotoViewAdapter;
@@ -37,5 +38,12 @@ public class PhotoActivity extends BaseActivity {
         photoList = intent.getStringArrayListExtra(PHOTO_VIEW);
         viewAdapter = new PhotoViewAdapter(this, photoList);
         viewPager.setAdapter(viewAdapter);
+        //点击图片退出
+        viewAdapter.setPhotoTapListener(new PhotoViewAdapter.PhotoViewClickListener() {
+            @Override
+            public void onClick() {
+                finish();
+            }
+        });
     }
 }
