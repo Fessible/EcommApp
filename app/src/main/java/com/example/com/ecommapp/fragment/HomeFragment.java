@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
+import com.example.com.ecommapp.activity.PhotoActivity;
 import com.example.com.ecommapp.adapter.HomeAdapter;
 import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.module.recommand.RecommendModel;
@@ -24,6 +27,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.example.com.ecommapp.activity.PhotoActivity.PHOTO_VIEW;
+import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_CARD;
+import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_CARD_MULTI;
+import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_VEDIO;
 
 /**
  * Created by rhm on 2017/10/31.
@@ -64,11 +72,36 @@ public class HomeFragment extends BaseFragment  {
     protected void initView(View view, Bundle savedInstanceState) {
         adapter = new HomeAdapter(getActivity(), mData);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(itemClickListener);
         AnimationDrawable animationDrawable = (AnimationDrawable) loadView.getDrawable();
         animationDrawable.start();
         requestRecommend();
     }
 
+    //todo HorizontalScrollView点击事件未完成
+    private HomeAdapter.OnMultiClickListener multiClickListener = new HomeAdapter.OnMultiClickListener() {
+        @Override
+        public void onClick(List<String> url) {
+            Intent intent = new Intent(getContext(), PhotoActivity.class);
+            intent.putStringArrayListExtra(PHOTO_VIEW, (ArrayList<String>) url);
+            startActivity(intent);
+        }
+    };
+
+
+
+    private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Toast.makeText(getContext(), "you click" + position,Toast.LENGTH_SHORT).show();
+            RecommendValue value = (RecommendValue) adapter.getItem(position);
+            if (value.type != TYPE_VEDIO) {
+                Intent intent = new Intent(getContext(), PhotoActivity.class);
+                intent.putStringArrayListExtra(PHOTO_VIEW, (ArrayList<String>) value.url);
+                startActivity(intent);
+            }
+        }
+    };
 
     /**
      * 请求首页数据

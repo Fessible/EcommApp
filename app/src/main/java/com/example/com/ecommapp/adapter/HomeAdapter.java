@@ -1,11 +1,14 @@
 package com.example.com.ecommapp.adapter;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,23 +29,28 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class HomeAdapter extends BaseAdapter {
-    //三种类型
+    //类型
     private final static int TYPE_COUNT = 4;
-    private final static int TYPE_VEDIO = 0x00;
-    private final static int TYPE_CARD = 0x02;
-    private final static int TYPE_CARD_MULTI = 0x01;
-    private final static int TYPE_VIEW_PAGER = 0x03;
+    public final static int TYPE_VEDIO = 0x00;
+    public final static int TYPE_CARD = 0x02;
+    public final static int TYPE_CARD_MULTI = 0x01;
+    public final static int TYPE_VIEW_PAGER = 0x03;
     private List<RecommendValue> mData;
     private Context mContext;
     private LayoutInflater inflater;
     private ImageLoaderManager imageLoader;
     private HomeViewPagerAdapter adapter;
+    private OnMultiClickListener multiClickListener;
 
     public HomeAdapter(Context context, List<RecommendValue> data) {
         this.mContext = context;
         this.mData = data;
         inflater = LayoutInflater.from(context);
         imageLoader = ImageLoaderManager.getInstance(context);
+    }
+
+    public void setMultiClickListener(OnMultiClickListener listener) {
+        this.multiClickListener = listener;
     }
 
     @Override
@@ -77,6 +85,7 @@ public class HomeAdapter extends BaseAdapter {
     }
 
     /*************************init View*****************************************/
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
@@ -93,6 +102,7 @@ public class HomeAdapter extends BaseAdapter {
                     break;
                 case TYPE_CARD_MULTI:
                     view = inflater.inflate(R.layout.item_multi_photo, parent, false);
+                    mViewHolder.multiProductLayout = view.findViewById(R.id.item_product_layout);
                     mViewHolder.mPriceView = view.findViewById(R.id.item_price_view);
                     mViewHolder.mFromView = view.findViewById(R.id.item_from_view);
                     mViewHolder.mZanView = view.findViewById(R.id.item_zan_view);
@@ -132,6 +142,14 @@ public class HomeAdapter extends BaseAdapter {
             case TYPE_CARD_MULTI:
                 mViewHolder.mPriceView.setText(value.price);
                 mViewHolder.mFromView.setText(value.from);
+                mViewHolder.multiProductLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (multiClickListener != null) {
+                            multiClickListener.onClick(value.url);
+                        }
+                    }
+                });
                 mViewHolder.mZanView.setText(mContext.getString(R.string.dian_zan).concat(String.valueOf(value.zan)));
                 imageLoader.displayImage(mViewHolder.mProductOneView, value.url.get(0));
                 imageLoader.displayImage(mViewHolder.mProductTwoView, value.url.get(1));
@@ -153,6 +171,10 @@ public class HomeAdapter extends BaseAdapter {
         return view;
     }
 
+
+    public interface OnMultiClickListener{
+        void onClick(List<String> url);
+    }
 
     static class ViewHolder {
 
@@ -185,6 +207,8 @@ public class HomeAdapter extends BaseAdapter {
 
         //Card Mutil
 
+        HorizontalScrollView multiProductLayout;
+
         ImageView mProductOneView;
 
         ImageView mProductTwoView;
@@ -196,6 +220,7 @@ public class HomeAdapter extends BaseAdapter {
         //View Pager属性
 
         ViewPager mViewPager;
+
 
 
     }
