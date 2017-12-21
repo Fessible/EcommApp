@@ -3,21 +3,20 @@ package com.example.com.support.video;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import android.widget.RelativeLayout;
 
 import com.example.com.glide.R;
 import com.example.com.support.util.SDKConstant;
+import com.example.com.support.util.Utils;
 
 /**
  * Created by rhm on 2017/12/17.
@@ -36,7 +36,7 @@ import com.example.com.support.util.SDKConstant;
 public class CustomVideoView extends RelativeLayout implements View.OnClickListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, TextureView.SurfaceTextureListener {
     private static final String TAG = "CustomVideoView";
     private static final int TIME_MSG = 0x01;
-    private static final int TIME_INVAL = 1000;
+    private static final int TIME_INTERVAL = 1000;//时间间隔
     private static final int STATE_ERROR = -1;
     private static final int STATE_IDLE = 0;//空闲状态
     private static final int STATE_PLAYING = 1;
@@ -57,6 +57,13 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     private Surface videoSurface;
     private MediaPlayer mediaPlayer;//视频播放器
     private ScreenEventReceiver screenEventReceiver;//锁屏广播接收器
+    private boolean isRealPause; //手动点击的暂停
+    private boolean isComplete;//是否播放完成
+    private Context context;
+    private Uri uri;
+
+
+    private VideoPlayerListener videoPlayerListener;
 
 
     //状态
@@ -65,11 +72,20 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     private int screenWidth;
     private int destationHeight;
 
-    //播中检测 用于向服务器返回 当前播放的位置
+    //播中检测 用于向服务器返回 当前播放的位置  ,在播放和load 时使用，其他情况下remove
     private Handler mHanlder = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            switch (msg.what) {
+                case TIME_MSG:
+                    if (isPlaying()) {
+                        //回调缓存监听
+                        sendEmptyMessageDelayed(TIME_MSG, TIME_INTERVAL);
+                        videoPlayerListener.onBufferUpdate(getCurrentPosition());
+                    }
+                    break;
+            }
         }
     };
 
@@ -80,7 +96,6 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         initData();
         registerBroadcastReceiver();
     }
-
 
     private void initView() {
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
@@ -93,6 +108,9 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     }
 
     private void initData() {
+        mVideoView.setOnClickListener(this);
+        mVideoView.setKeepScreenOn(true);
+        mVideoView.setSurfaceTextureListener(this);
         audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         imgEnlarge.setOnClickListener(this);
         btnPlay.setOnClickListener(this);
@@ -103,17 +121,19 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         screenWidth = displayMetrics.widthPixels;
         destationHeight = (int) (screenWidth *
                 SDKConstant.VIDEO_HEIGHT_PERCENT); //宽度乘 9/16
-
-    }
-
-    public void setDataSource(String url) {
-        this.url = url;
     }
 
     /**
      * 注册广播
      */
     private void registerBroadcastReceiver() {
+        if (screenEventReceiver == null) {
+            screenEventReceiver = new ScreenEventReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+            intentFilter.addAction(Intent.ACTION_USER_PRESENT);
+            getContext().registerReceiver(screenEventReceiver, intentFilter);
+        }
     }
 
     /**
@@ -123,6 +143,47 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
      */
     private void setCurrentState(int state) {
         playerState = state;
+    }
+
+    /**
+     * 获取当前播放位置
+     * @return
+     */
+    public int getCurrentPosition() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getCurrentPosition();
+        }
+        return 0;
+    }
+
+    /**
+     * 获取总的播放时间
+     * @return
+     */
+    public int getDuration(){
+        if (mediaPlayer != null) {
+            return mediaPlayer.getDuration();
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean isComplete(){
+        return isComplete;
+    }
+
+    /**
+     * 设置URL
+     *
+     * @param url
+     */
+    public void setDataSource(String url) {
+        this.url = url;
+    }
+
+    public void setDataSource(Context context, Uri uri) {
+        this.context = context;
+        this.uri = uri;
     }
 
     /**
@@ -138,11 +199,15 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         try {
             setCurrentState(STATE_IDLE);
             checkMediaPlayer();//完成播放器的创建工作
-            mediaPlayer.setDataSource(url);
+            if (context != null) {
+                mediaPlayer.setDataSource(context, uri);
+            } else {
+                mediaPlayer.setDataSource(url);
+            }
             mediaPlayer.prepareAsync();//异步加载视频
 
         } catch (Exception e) {
-            e.printStackTrace();
+            stop();
         }
     }
 
@@ -176,7 +241,6 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         return mediaPlayer;
     }
 
-
     /**
      * 显示加载图
      */
@@ -186,7 +250,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         imgFrame.setVisibility(GONE);
         btnPlay.setVisibility(GONE);
         imgLoading.setVisibility(VISIBLE);
-        AnimationDrawable animationDrawable = (AnimationDrawable) imgLoading.getDrawable();
+        AnimationDrawable animationDrawable = (AnimationDrawable) imgLoading.getBackground();
         animationDrawable.start();
         loadFrameImg();
     }
@@ -209,6 +273,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
             mediaPlayer = null;
         }
         setCurrentState(STATE_IDLE);
+        mHanlder.removeCallbacksAndMessages(null);
         //重新加载视频
         if (currentCount < LOAD_TOTAL_COUNT) {
             currentCount += 1;
@@ -216,7 +281,6 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         } else {//停止重试
             showPauseView(true);//显示暂停
         }
-
     }
 
     private void showPauseView(boolean isPause) {
@@ -232,34 +296,6 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         }
     }
 
-
-    /**
-     * 可见状态变化
-     *
-     * @param changedView
-     * @param visibility
-     */
-    @Override
-    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
-        super.onVisibilityChanged(changedView, visibility);
-    }
-
-    /**
-     * 设置为true，默认处理点击事件
-     *
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return true;
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
     /**
      * 播放器处于就绪状态，才能使用start
      *
@@ -272,8 +308,11 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
             mediaPlayer.setOnBufferingUpdateListener(this);
             currentCount = 0;//重试次数设为0
             //listener回调loadSuccess
+            if (videoPlayerListener != null) {
+                videoPlayerListener.loadSuccess();
+            }
             //准备好后，根据具体条件判断是否可播放
-            decideCanplay();
+            decideCanPlay();
         }
     }
 
@@ -281,15 +320,14 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
      * 1.是否大于视频播放屏幕的50%
      * 2.是否和用户设置的网络状态一致
      */
-    private void decideCanplay() {
-        if (true) {
+    private void decideCanPlay() {
+        //来回切换页面时，只有 >50,且满足自动播放条件才自动播放
+        if (Utils.getVisiblePercent(mParentContainer) > SDKConstant.VIDEO_SCREEN_PERCENT) {
             resume();
         } else {
             pause();
         }
     }
-
-
 
     /**
      * 播放视频
@@ -302,14 +340,11 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         if (!isPlaying()) {
             mediaPlayer.start();
             setCurrentState(STATE_PLAYING);//更新状态
-
-
+            mHanlder.sendEmptyMessage(TIME_MSG);
         }
-
-
     }
 
-    private boolean isPlaying(){
+    private boolean isPlaying() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             return true;
         }
@@ -329,6 +364,9 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         setCurrentState(STATE_ERROR);
         if (currentCount >= LOAD_TOTAL_COUNT) {
             //失败回调
+            if (videoPlayerListener != null) {
+                videoPlayerListener.loadFail();
+            }
             showPauseView(true);
         }
         stop();//清空内容
@@ -338,10 +376,16 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
     @Override
     public void onCompletion(MediaPlayer mp) {
         //成功回调
+        if (videoPlayerListener != null) {
+            videoPlayerListener.loadComplete();
+        }
         //回到初始状态
         playBack();
     }
 
+    /**
+     * 回到初始状态
+     */
     private void playBack() {
         setCurrentState(STATE_PAUSING);
         if (mediaPlayer != null) {
@@ -349,6 +393,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
             mediaPlayer.seekTo(0);
             mediaPlayer.pause();
         }
+        mHanlder.removeCallbacksAndMessages(null);
         showPauseView(true);
     }
 
@@ -363,8 +408,64 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         if (isPlaying()) {
             mediaPlayer.pause();
         }
+        mHanlder.removeCallbacksAndMessages(null);
         showPauseView(true);
     }
+
+
+    /**
+     * 可见状态变化，控制视频播放和暂停状态
+     *
+     * @param changedView
+     * @param visibility
+     */
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == VISIBLE && playerState == STATE_PAUSING) {
+            if (isComplete||isRealPause) {//播放完成，则继续暂停 或者点击了暂停
+                pause();
+            } else {
+                decideCanPlay();//根据屏幕判断是否可播放
+            }
+        } else {
+            pause();
+        }
+
+    }
+
+    /**
+     * 设置为true，默认处理点击事件
+     *
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        if (v == mVideoView && videoPlayerListener != null) {
+            videoPlayerListener.onClickVideoView();
+        } else if (v == btnPlay) {
+            if (playerState == STATE_PAUSING) {
+                if (Utils.getVisiblePercent(mParentContainer) > SDKConstant.VIDEO_SCREEN_PERCENT) {
+                    resume();
+                    if (videoPlayerListener != null) {
+                        videoPlayerListener.onClickPlay();
+                    }
+                }
+            }
+
+        } else if (v == imgEnlarge && videoPlayerListener != null) {
+            videoPlayerListener.onClickFullButton();
+        }
+
+    }
+
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
 
@@ -401,12 +502,52 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
 
     /**
      * 监听锁屏事件的广播
+     * Intent.ACTION_SCREEN_ON ： 屏幕点亮
+     * Intent.ACTION_SCREEN_OFF ：屏幕关闭
+     * Intent.ACTION_USER_PRESENT： 用户解锁
      */
     private class ScreenEventReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            switch (intent.getAction()) {//主动锁屏时暂停pause，主动解锁时播放 resume
+                case Intent.ACTION_USER_PRESENT: // 解锁
+                    if (playerState == STATE_PAUSING) {
+                        //手动点的暂停 回来后仍显示暂停
+                        if (isRealPause) {
+                            pause();
+                        }
+                    } else {
+                        decideCanPlay(); //根据视频显示状态来决定是否播放
+                    }
+                    break;
+                case Intent.ACTION_SCREEN_OFF: //屏幕关闭
+                    if (isPlaying()) {
+                        pause();
+                    }
+                    break;
+            }
         }
+    }
+
+    public void setVideoPlayerListener(VideoPlayerListener listener) {
+        this.videoPlayerListener = listener;
+    }
+
+
+    interface VideoPlayerListener {
+        void onBufferUpdate(int time);//当前更新的时间
+
+        void onClickVideoView();//点击VideoView
+
+        void onClickFullButton();//点击放大按钮
+
+        void onClickPlay();
+
+        void loadSuccess();
+
+        void loadFail();
+
+        void loadComplete();
     }
 }

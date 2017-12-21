@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.RelativeLayout;
 
 import com.example.com.ecommapp.R;
-import com.example.com.support.video.CustomVideoView;
+import com.example.com.support.CustomVideoView;
 
 /**
  * Created by rhm on 2017/12/19.
@@ -21,9 +21,10 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_layout);
         contentLayout = findViewById(R.id.relative_layout);
-        CustomVideoView customVideoView = new CustomVideoView(this, contentLayout);
+
         Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.baishi);
-//        customVideoView.setDataSource(this,uri);
+        CustomVideoView customVideoView = new CustomVideoView(this, contentLayout);
+        customVideoView.setDataSource(this,uri);
         contentLayout.addView(customVideoView);
     }
 }
