@@ -15,6 +15,7 @@ import com.example.com.support.CustomVideoView;
 
 public class TestActivity extends AppCompatActivity {
     private RelativeLayout contentLayout;
+//    private CustomVideoView customVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,7 +23,10 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_layout);
         contentLayout = findViewById(R.id.relative_layout);
 
+//        customVideoView = findViewById(R.id.custom_view);
         Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.baishi);
+//        customVideoView.setDataSource(this, uri);
+
         CustomVideoView customVideoView = new CustomVideoView(this, contentLayout);
         customVideoView.setDataSource(this,uri);
         contentLayout.addView(customVideoView);

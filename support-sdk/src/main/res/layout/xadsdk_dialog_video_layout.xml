@@ -6,6 +6,7 @@
                 android:background="@android:color/black"
     >
 
+    <!--视频位置-->
     <RelativeLayout
         android:id="@+id/content_layout"
         android:layout_width="match_parent"

@@ -288,6 +288,7 @@ public class CustomVideoView extends RelativeLayout implements View.OnClickListe
         imgLoading.setVisibility(GONE);
         imgLoading.clearAnimation();
         btnPlay.setVisibility(isPause ? VISIBLE : GONE);
+        mVideoView.setVisibility(isPause?GONE:VISIBLE);
         if (isPause) {
             imgFrame.setVisibility(VISIBLE);
             loadFrameImg();

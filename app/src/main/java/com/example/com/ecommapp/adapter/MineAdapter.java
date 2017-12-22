@@ -19,6 +19,11 @@ import butterknife.BindView;
  */
 
 public class MineAdapter extends RecyclerView.Adapter<MineAdapter.ViewHolder> {
+    public final static int STATE_VIDEO_SET = 0;
+    public final static int STATE_SHARE = 1;
+    public final static int STATE_QCODE = 2;
+    public final static int STATE_VERSION = 3;
+
     private List<String> titleList = new ArrayList<>();
     private Context context;
     private onItemClick onItemClick;

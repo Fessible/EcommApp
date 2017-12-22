@@ -88,12 +88,9 @@ public class HomeFragment extends BaseFragment  {
         }
     };
 
-
-
     private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//            Toast.makeText(getContext(), "you click" + position,Toast.LENGTH_SHORT).show();
             RecommendValue value = (RecommendValue) adapter.getItem(position);
             if (value.type != TYPE_VEDIO) {
                 Intent intent = new Intent(getContext(), PhotoActivity.class);
