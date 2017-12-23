@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -61,6 +62,7 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
     private boolean isRealPause = false;//手动暂停
     private ScreenEventReceiver receiver;
     private boolean isComplete;
+    private AudioManager audioManager;
 
 
     //播中检测 用于向服务器返回 当前播放的位置  ,在播放时使用，其他情况下remove
@@ -85,6 +87,7 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
     public CustomVideoView(Context context, ViewGroup parent) {
         super(context);
         mParentContainer = parent;
+        audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         initView();
         registerReceiver();
     }
@@ -118,10 +121,12 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
     private OnClickListener btnPlayClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            mediaPlayer.seekTo(getCurrentPosition());
-            mediaPlayer.start();
-            if (listener != null) {
-                listener.onClickPlay();
+            if (mediaPlayer != null) {
+                mediaPlayer.seekTo(getCurrentPosition());
+                mediaPlayer.start();
+                if (listener != null) {
+                    listener.onClickPlay();
+                }
             }
             showPauseView(false);
         }
@@ -139,7 +144,7 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
     private OnClickListener videoClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (isPlaying()) {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 isRealPause = true;
                 if (listener != null) {
                     listener.onClickVideoView();
@@ -171,11 +176,7 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
             initMediaPlayer();
         }
         try {
-            if (context != null) {
-                mediaPlayer.setDataSource(context, uri);
-            } else {
-                mediaPlayer.setDataSource(url);
-            }
+            mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
             playState = STATE_IDLE;
         } catch (IOException e) {
@@ -245,6 +246,28 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
         }
     }
 
+
+    /**
+     * 可见状态变化，控制视频播放和暂停状态
+     *
+     * @param changedView
+     * @param visibility
+     */
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == VISIBLE && playState == STATE_PAUSE) {
+            if (isComplete || isRealPause) {//播放完成，则继续暂停 或者点击了暂停
+                pause();
+            } else {
+                decideCanPlay();//根据屏幕判断是否可播放
+            }
+        } else {
+            pause();
+        }
+
+    }
+
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
 
@@ -293,12 +316,15 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
         return isComplete;
     }
 
-    public int getDuration(){
+    public int getDuration() {
         return mediaPlayer.getDuration();
     }
 
     public int getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
+        if (mediaPlayer != null) {
+            return mediaPlayer.getCurrentPosition();
+        }
+        return 0;
     }
 
     public boolean isRealPause() {
@@ -337,6 +363,13 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
         }
     }
 
+    public void mute(boolean isMute) {
+        if (mediaPlayer != null) {
+            float volume = isMute ? 0.0f : 1.0f;
+            mediaPlayer.setVolume(volume, volume);
+        }
+    }
+
     /**
      * 播放视频
      */
@@ -351,6 +384,7 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
 
     /**
      * 跳到指定点播放视频
+     *
      * @param position
      */
     public void seekAndResume(int position) {
@@ -368,11 +402,15 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
         }
 
     }
+
     /**
      * 暂停
      */
     public void pause() {
-
+        if (playState != STATE_PLAYING) {
+            return;
+        }
+        isRealPause = false;
         playState = STATE_PAUSE;
         if (isPlaying()) {
             mediaPlayer.pause();
@@ -381,6 +419,13 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
         showPauseView(true);
     }
 
+    public void setBtnPlayVisible(boolean isVisible) {
+        btnPlay.setVisibility(isVisible ? VISIBLE : GONE);
+    }
+
+    public void setParentContainer(ViewGroup parentContainer) {
+        this.mParentContainer = parentContainer;
+    }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -406,7 +451,7 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
 
     }
 
-    private void playBack() {
+    public void playBack() {
         playState = STATE_PAUSE;
         if (mediaPlayer != null) {
             mediaPlayer.setOnSeekCompleteListener(null);
@@ -415,6 +460,14 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
         }
         mHanlder.removeCallbacksAndMessages(null);
         showPauseView(true);
+    }
+
+    public void setFullButton(boolean isVisible) {
+        imgEnlarge.setVisibility(isVisible ? VISIBLE : GONE);
+    }
+
+    public void setVideoVisible(boolean isVisible) {
+        mVideoView.setVisibility(isVisible ? VISIBLE : GONE);
     }
 
     /**
@@ -490,8 +543,6 @@ public class CustomVideoView extends RelativeLayout implements TextureView.Surfa
                     }
                     break;
             }
-
         }
     }
-
 }
