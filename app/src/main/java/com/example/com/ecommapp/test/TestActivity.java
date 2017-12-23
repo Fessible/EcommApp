@@ -8,6 +8,8 @@ import android.widget.RelativeLayout;
 
 import com.example.com.ecommapp.R;
 import com.example.com.support.CustomVideoView;
+import com.example.com.support.FullVideoDialog;
+import com.example.com.support.VideoManager;
 
 /**
  * Created by rhm on 2017/12/19.
@@ -27,8 +29,13 @@ public class TestActivity extends AppCompatActivity {
         Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.baishi);
 //        customVideoView.setDataSource(this, uri);
 
-        CustomVideoView customVideoView = new CustomVideoView(this, contentLayout);
-        customVideoView.setDataSource(this,uri);
-        contentLayout.addView(customVideoView);
+//        CustomVideoView customVideoView = new CustomVideoView(this, contentLayout);
+//        customVideoView.setDataSource(this,uri);
+//        FullVideoDialog dialog = new FullVideoDialog(this, customVideoView);
+//        dialog.show();
+//        contentLayout.addView(customVideoView);
+
+//        String path = "android.resource://" + getPackageName() + "/" + R.raw.baishi;
+//        VideoManager videoManager = new VideoManager(contentLayout, path);
     }
 }

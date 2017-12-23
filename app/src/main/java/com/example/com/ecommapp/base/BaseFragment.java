@@ -3,6 +3,7 @@ package com.example.com.ecommapp.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,5 +50,9 @@ public abstract class BaseFragment extends Fragment {
         if (unbinder != null) {
             unbinder.unbind();
         }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
     }
 }

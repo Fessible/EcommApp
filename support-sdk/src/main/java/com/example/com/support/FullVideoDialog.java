@@ -32,7 +32,7 @@ public class FullVideoDialog extends Dialog implements CustomVideoView.VideoPlay
     private CustomVideoView videoView;
     private boolean isFocus;
 
-    public FullVideoDialog(@NonNull Context context, CustomVideoView videoView, Advalue advalue) {
+    public FullVideoDialog(@NonNull Context context, CustomVideoView videoView) {
         super(context, R.style.dialog_full_screen);//保证dialog全屏
         this.videoView = videoView;
     }

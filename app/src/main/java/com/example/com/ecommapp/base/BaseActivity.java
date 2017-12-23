@@ -1,7 +1,12 @@
 package com.example.com.ecommapp.base;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -36,6 +41,43 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         if (unbinder != null) {
             unbinder.unbind();
+        }
+    }
+
+    /**
+     * 寻找Fragment
+     *
+     * @param tag
+     * @param <F>
+     * @return
+     */
+    public final <F extends Fragment> F findFragment(@NonNull String tag) {
+        FragmentManager fm = getSupportFragmentManager();
+        return (F) fm.findFragmentByTag(tag);
+    }
+
+    /**
+     * 添加Fragment
+     */
+    public final <F extends Fragment> void addFragment(@IdRes int containerViewId, F fragment, @Nullable String tag) {
+        if (fragment != null) {
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(containerViewId, fragment, tag);
+            ft.commit();
+            fm.executePendingTransactions();//立刻执行
+        }
+    }
+
+    public final <F extends Fragment> void removeFragmentsIfExits(F... fragments) {
+        if (fragments != null && fragments.length > 0) {
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            for (Fragment fragment : fragments) {
+                if (fragment != null) {
+                    ft.remove(fragment);
+                }
+            }
         }
     }
 
