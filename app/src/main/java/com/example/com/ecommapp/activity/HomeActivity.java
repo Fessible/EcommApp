@@ -9,9 +9,9 @@ import android.widget.RadioGroup;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.base.BaseActivity;
-import com.example.com.ecommapp.fragment.HomeFragment;
-import com.example.com.ecommapp.fragment.MessageFragment;
-import com.example.com.ecommapp.fragment.MineFragment;
+import com.example.com.ecommapp.fragment.home.HomeFragment;
+import com.example.com.ecommapp.fragment.message.MessageFragment;
+import com.example.com.ecommapp.fragment.mine.MineFragment;
 
 import butterknife.BindView;
 

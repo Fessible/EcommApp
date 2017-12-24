@@ -1,4 +1,4 @@
-package com.example.com.ecommapp.fragment;
+package com.example.com.ecommapp.fragment.message;
 
 import android.os.Bundle;
 import android.view.View;

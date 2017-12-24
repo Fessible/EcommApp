@@ -139,8 +139,8 @@ public class HomeAdapter extends BaseAdapter {
         mViewHolder.mFooterView.setText(value.text);
         switch (type) {
             case TYPE_VEDIO:
-                String path = "android.resource://" + mContext.getPackageName() + "/" + R.raw.baishi;
-                VideoManager videoManager = new VideoManager(mContext,mViewHolder.mVieoContentLayout, value.resource);
+//                String path = "android.resource://" + mContext.getPackageName() + "/" + R.raw.baishi;
+//                VideoManager videoManager = new VideoManager(mContext,mViewHolder.mVieoContentLayout, value.resource);
                 break;
             case TYPE_CARD_MULTI:
                 mViewHolder.mPriceView.setText(value.price);

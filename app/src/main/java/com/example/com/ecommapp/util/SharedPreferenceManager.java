@@ -14,6 +14,7 @@ public class SharedPreferenceManager {
     /**
      * Preference文件名
      */
+    public static final String VIDEO_SETTING = "video_setting";
     private static final String SHARE_PREFREENCE_NAME = "ecomm.pre";
     private SharedPreferences preferences;
     private static SharedPreferenceManager mInstance;

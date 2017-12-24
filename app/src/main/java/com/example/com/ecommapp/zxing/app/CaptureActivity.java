@@ -615,7 +615,7 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
      *
      * @return
      */
-    private Bitmap createQRCode() {
+    private  Bitmap createQRCode() {
         int QR_WIDTH = 300;
         int QR_HEIGHT = 300;
 

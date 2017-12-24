@@ -55,7 +55,6 @@
             android:textColor="@color/color_333333"
             android:textSize="18sp"
             />
-
         <CheckBox
             android:id="@+id/alway_check_box"
             android:layout_width="wrap_content"
@@ -63,9 +62,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:button="@null"
-            android:checked="false"
-            android:clickable="false"
             />
     </RelativeLayout>
     <View
@@ -98,9 +94,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:button="@null"
-            android:checked="false"
-            android:clickable="false"
             />
     </RelativeLayout>
     <View
@@ -133,9 +126,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:button="@null"
-            android:checked="false"
-            android:clickable="false"
             />
     </RelativeLayout>
 </LinearLayout>
