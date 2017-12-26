@@ -8,5 +8,7 @@ import java.io.Serializable;
  */
 
 public class BaseModel implements Serializable {
+    public String ecode;
+    public String emsg;
     private final static long serialVersionUID = 1L;
 }

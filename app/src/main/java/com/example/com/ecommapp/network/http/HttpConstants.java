@@ -10,6 +10,11 @@ public class HttpConstants {
     /**
      * 首页请求接口
      */
-    protected final static String HOME = ROOT_URL+"/home";
+    public final static String HOME = ROOT_URL + "/home";
+
+    /**
+     * 版本更新
+     */
+    public final static String VERSION = ROOT_URL + "/version";
 
 }

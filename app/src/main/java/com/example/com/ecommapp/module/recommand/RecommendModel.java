@@ -10,7 +10,6 @@ import java.util.List;
  */
 
 public class RecommendModel extends BaseModel {
-    public String ecode;
-    public String emsg;
+
     public List<RecommendValue> data;
 }

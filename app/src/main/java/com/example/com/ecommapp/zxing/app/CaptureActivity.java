@@ -52,6 +52,7 @@ import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.activity.QrcodeActivity;
+import com.example.com.ecommapp.util.Utils;
 import com.example.com.ecommapp.zxing.camera.CameraManager;
 import com.example.com.ecommapp.zxing.decode.BeepManager;
 import com.example.com.ecommapp.zxing.decode.CaptureActivityHandler;
@@ -229,7 +230,9 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
 
     @OnClick(R.id.qrcode_btn)
     public void createQrcode(View view) {
-        Bitmap b = createQRCode();
+//        Bitmap b = createQRCode();
+        text = Util.getIMEI(this);
+        Bitmap b = Utils.createQRCode(300, 300, text);
         Intent intent = new Intent(this, QrcodeActivity.class);
         intent.putExtra(QRCODE, b);
         startActivity(intent);
