@@ -1,12 +1,9 @@
 package com.example.com.ecommapp.view;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;

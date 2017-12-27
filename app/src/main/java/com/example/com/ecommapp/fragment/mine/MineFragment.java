@@ -10,35 +10,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
-import com.example.com.ecommapp.activity.LoginActivity;
 import com.example.com.ecommapp.activity.QrcodeActivity;
 import com.example.com.ecommapp.adapter.MineAdapter;
-import com.example.com.ecommapp.application.EcomAplication;
 import com.example.com.ecommapp.base.BaseFragment;
-import com.example.com.ecommapp.module.user.User;
 import com.example.com.ecommapp.module.version.VersionModel;
 import com.example.com.ecommapp.network.http.HttpRequest;
 import com.example.com.ecommapp.util.IntentUtil;
 import com.example.com.ecommapp.util.Utils;
-import com.example.com.ecommapp.view.CommonDialog;
-import com.example.com.ecommapp.zxing.util.Util;
 import com.example.com.support.okhttp.listener.DisposeListener;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.Version;
-
-import java.util.Hashtable;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.Response;
 
 import static com.example.com.ecommapp.adapter.MineAdapter.STATE_QCODE;
 import static com.example.com.ecommapp.adapter.MineAdapter.STATE_SHARE;
@@ -158,7 +143,6 @@ public class MineFragment extends BaseFragment {
 
     @OnClick(R.id.login_view)
     public void Login(View view) {
-        Intent intent = new Intent(getContext(), LoginActivity.class);
-        startActivity(intent);
+        IntentUtil.startTemplateActivity(MineFragment.this, LoginFragment.class, LoginFragment.TAG_Login_FRAGMENT);
     }
 }

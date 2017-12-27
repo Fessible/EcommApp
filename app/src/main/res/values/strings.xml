@@ -47,6 +47,9 @@
     <string name="jpush_message_content">消息内容:</string>
     <string name="jpush_message_title">推送消息</string>
     <string name="video">视频</string>
+    <string name="login_forget_pass">忘记密码</string>
+    <string name="hint_input_phone">请输入手机号</string>
+    <string name="hint_input_password">请输入密码</string>
 
     <!-- QR_Code -->
     <string name="button_ok">OK</string>
