@@ -15,12 +15,12 @@ public interface UpdateDownloadListener {
     /**
      * 进度更新
      */
-    public void onProgressChanged();
+    public void onProgressChanged(int processs, String downloadUrl);
 
     /**
      * 下载完成
      */
-    public void onFinished();
+    public void onFinished(float completeSize, String downloadUrl);
 
     /**
      * 下载失败

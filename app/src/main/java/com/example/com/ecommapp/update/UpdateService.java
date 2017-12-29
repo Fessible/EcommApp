@@ -16,4 +16,10 @@ public class UpdateService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    /**
+     * 真正的下载文件，发送消息回调接口
+     */
+    public class DownloadResponseHandler {
+    }
 }
