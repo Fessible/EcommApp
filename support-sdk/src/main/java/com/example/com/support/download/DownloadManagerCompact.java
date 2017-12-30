@@ -47,6 +47,4 @@ public class DownloadManagerCompact {
 
         return request;
     }
-
-
 }
