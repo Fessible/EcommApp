@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import com.example.com.ecommapp.fragment.mine.LoginFragment;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -23,7 +21,7 @@ public class UpdateDownloadRequest implements Runnable {
     private String downloadUrl;//下载地址
     private String localFilePath;//文件存储路径
 
-    private UpdateDownloadListener downloadListener;
+    private UpdateDownloadListener downloadListener; //事件监听回调
     private boolean isDownloading = false;
     private long currentLength;//当前下载长度
 
@@ -112,16 +110,14 @@ public class UpdateDownloadRequest implements Runnable {
             };
         }
 
+        //转换到主线程中
         private void handleSelfMessage(Message msg) {
-            Object[] response;
             switch (msg.what) {
                 case FAILURE_MESSAGE:
-                    response = (Object[]) msg.obj;
-                    sendFailureMessage(response[0]);
+                    handleFailureMessage((FailureCode) msg.obj);
                     break;
                 case PROCESS_CHANGED:
-                    response = (Object[]) msg.obj;
-                    progressChangedMessage(((Integer) response[0]).intValue());
+                    handleProgressChangedMessage((Integer) msg.obj);
                     break;
                 case FINISH_MESSAGE:
                     onFinish();
@@ -129,6 +125,15 @@ public class UpdateDownloadRequest implements Runnable {
             }
 
         }
+
+        private void handleProgressChangedMessage(int progress) {
+            downloadListener.onProgressChanged(progress, downloadUrl);
+        }
+
+        private void handleFailureMessage(FailureCode failureCode) {
+            onFailure(failureCode);
+        }
+
 
         //下载成功接口回调
         public void onFinish() {
@@ -140,7 +145,7 @@ public class UpdateDownloadRequest implements Runnable {
             downloadListener.onFailure();
         }
 
-        //文件下载
+        //文件下载,发送各种事件类型
         public void sendResponseMessage(InputStream inputStream) {
             RandomAccessFile randomAccessFile = null;
             completeSize = 0;
@@ -157,7 +162,7 @@ public class UpdateDownloadRequest implements Runnable {
                             progress = (int) Float.parseFloat(getTwoPointFloatStr(completeSize / currentLength));
                             //限制notification的更新频率
                             if (limit / 30 == 0 || progress <= 100) {
-                                progressChangedMessage(progress);
+                                sendprogressChangeMessage(progress);
                             }
                             limit++;
                         }
@@ -191,13 +196,28 @@ public class UpdateDownloadRequest implements Runnable {
             downloadListener.onProgressChanged(progress, downloadUrl);
         }
 
-        private void sendFailureMessage(Object o) {
+        public void sendprogressChangeMessage(int progress) {
+            sendMessage(Message.obtain(handler, PROCESS_CHANGED, new Object[]{progress}));
+
+        }
+
+        private void sendFailureMessage(FailureCode failureCode) {
+            sendMessage(Message.obtain(handler, FAILURE_MESSAGE, new Object[]{failureCode}));
 
         }
 
         private void sendFinishMessage() {
+            sendMessage(Message.obtain(handler, FINISH_MESSAGE));
         }
 
-
+        private void sendMessage(Message msg) {
+            if (handler != null) {
+                handler.sendMessage(msg);
+            } else {
+                handleSelfMessage(msg);
+            }
+        }
     }
+
 }
+

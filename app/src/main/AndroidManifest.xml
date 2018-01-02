@@ -55,6 +55,11 @@
             android:name=".activity.TemplateActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name=".update.UpdateService"
+            android:exported="true" />
+
         <!-- ShareSDK的activity -->
         <activity
             android:name="com.mob.tools.MobUIShell"

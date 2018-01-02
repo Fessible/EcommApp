@@ -15,7 +15,7 @@ public interface UpdateDownloadListener {
     /**
      * 进度更新
      */
-    public void onProgressChanged(int processs, String downloadUrl);
+    public void onProgressChanged(int process, String downloadUrl);
 
     /**
      * 下载完成

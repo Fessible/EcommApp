@@ -7,13 +7,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * 下载管理器
+ * 下载管理器，调用UpdateDownloadRequest
  * Created by rhm on 2017/12/28.
  */
 
 public class UpdateManager {
     private static UpdateManager manager;
-    private ThreadPoolExecutor threadPoolExecutor;
+    private ThreadPoolExecutor threadPoolExecutor;//线程池
     private UpdateDownloadRequest request;
 
     private UpdateManager() {
@@ -32,8 +32,8 @@ public class UpdateManager {
         if (request != null) {
             return;
         }
-        request = new UpdateDownloadRequest(downloadUrl, localPath, listener);
         chekLocalFilePaht(localPath);//检测文件路径
+        request = new UpdateDownloadRequest(downloadUrl, localPath, listener);
         Future<?> future = threadPoolExecutor.submit(request);
 
     }
