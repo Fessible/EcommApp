@@ -1,5 +1,7 @@
 package com.example.com.ecommapp.update;
 
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -30,6 +32,7 @@ public class UpdateManager {
 
     public void startDownloads(String downloadUrl, String localPath, UpdateDownloadListener listener) {
         if (request != null) {
+            listener.onFinished(0,"");
             return;
         }
         chekLocalFilePaht(localPath);//检测文件路径

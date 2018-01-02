@@ -3,6 +3,7 @@ package com.example.com.ecommapp.update;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,7 +87,7 @@ public class UpdateDownloadRequest implements Runnable {
     }
 
 
-    //真正的下载文件，发送消息 回调接口
+    //    真正的下载文件，发送消息 回调接口
     public class DownloadHandler {
         public static final int SUCCESS_MESSAGE = 0;
         public static final int FAILURE_MESSAGE = 1;
@@ -104,27 +105,11 @@ public class UpdateDownloadRequest implements Runnable {
             handler = new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
                     handleSelfMessage(msg);
                 }
             };
         }
 
-        //转换到主线程中
-        private void handleSelfMessage(Message msg) {
-            switch (msg.what) {
-                case FAILURE_MESSAGE:
-                    handleFailureMessage((FailureCode) msg.obj);
-                    break;
-                case PROCESS_CHANGED:
-                    handleProgressChangedMessage((Integer) msg.obj);
-                    break;
-                case FINISH_MESSAGE:
-                    onFinish();
-                    break;
-            }
-
-        }
 
         private void handleProgressChangedMessage(int progress) {
             downloadListener.onProgressChanged(progress, downloadUrl);
@@ -145,6 +130,60 @@ public class UpdateDownloadRequest implements Runnable {
             downloadListener.onFailure();
         }
 
+        public void sendprogressChangeMessage(int progress) {
+            sendMessage(obtainMessage(PROCESS_CHANGED, new Object[]{progress}));
+
+        }
+
+        private void sendFailureMessage(FailureCode failureCode) {
+            sendMessage(obtainMessage(FAILURE_MESSAGE, new Object[]{failureCode}));
+
+        }
+
+        private void sendFinishMessage() {
+            sendMessage(obtainMessage(FINISH_MESSAGE, null));
+        }
+
+        private void sendMessage(Message msg) {
+            if (handler != null) {
+                handler.sendMessage(msg);
+            } else {
+                handleSelfMessage(msg);
+            }
+        }
+
+        public Message obtainMessage(int responseMessage, Object response) {
+            Message msg = null;
+            if (handler != null) {
+                msg = handler.obtainMessage(responseMessage, response);
+            } else {
+                msg = Message.obtain();
+                msg.what = responseMessage;
+                msg.obj = response;
+            }
+            return msg;
+        }
+
+        //转换到主线程中
+        private void handleSelfMessage(Message msg) {
+            Object[] response;
+            switch (msg.what) {
+                case FAILURE_MESSAGE:
+                    response = (Object[]) msg.obj;
+                    handleFailureMessage((FailureCode) response[0]);
+                    break;
+                case PROCESS_CHANGED:
+                    response = (Object[]) msg.obj;
+                    handleProgressChangedMessage(((Integer) response[0]).intValue());
+                    break;
+                case FINISH_MESSAGE:
+                    onFinish();
+                    break;
+            }
+
+        }
+
+
         //文件下载,发送各种事件类型
         public void sendResponseMessage(InputStream inputStream) {
             RandomAccessFile randomAccessFile = null;
@@ -159,14 +198,14 @@ public class UpdateDownloadRequest implements Runnable {
                         randomAccessFile.write(buffer, 0, length);
                         completeSize += length;
                         if (completeSize < currentLength) {
-                            progress = (int) Float.parseFloat(getTwoPointFloatStr(completeSize / currentLength));
+                            progress = (int) (Float.parseFloat(getTwoPointFloatStr(completeSize / currentLength)) * 100);
+                            Log.e("tag", "下载进度：" + progress);
                             //限制notification的更新频率
-                            if (limit / 30 == 0 || progress <= 100) {
+                            if (limit % 30 == 0 && progress <= 100) {
                                 sendprogressChangeMessage(progress);
                             }
                             limit++;
                         }
-
                     }
                 }
                 sendFinishMessage();
@@ -190,34 +229,5 @@ public class UpdateDownloadRequest implements Runnable {
             }
 
         }
-
-
-        public void progressChangedMessage(int value) {
-            downloadListener.onProgressChanged(progress, downloadUrl);
-        }
-
-        public void sendprogressChangeMessage(int progress) {
-            sendMessage(Message.obtain(handler, PROCESS_CHANGED, new Object[]{progress}));
-
-        }
-
-        private void sendFailureMessage(FailureCode failureCode) {
-            sendMessage(Message.obtain(handler, FAILURE_MESSAGE, new Object[]{failureCode}));
-
-        }
-
-        private void sendFinishMessage() {
-            sendMessage(Message.obtain(handler, FINISH_MESSAGE));
-        }
-
-        private void sendMessage(Message msg) {
-            if (handler != null) {
-                handler.sendMessage(msg);
-            } else {
-                handleSelfMessage(msg);
-            }
-        }
     }
-
 }
-

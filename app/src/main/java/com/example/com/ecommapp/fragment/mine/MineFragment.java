@@ -17,6 +17,7 @@ import com.example.com.ecommapp.adapter.MineAdapter;
 import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.module.version.VersionModel;
 import com.example.com.ecommapp.network.http.HttpRequest;
+import com.example.com.ecommapp.update.UpdateService;
 import com.example.com.ecommapp.util.IntentUtil;
 import com.example.com.ecommapp.util.Utils;
 import com.example.com.support.okhttp.listener.DisposeListener;
@@ -101,6 +102,8 @@ public class MineFragment extends BaseFragment {
 
     };
 
+    private String url = "http://imtt.dd.qq.com/16891/6352ED6982A630FF770972495624240A.apk?fsname=cn.andouya_3.2.0406_233.apk&csr=1bbd";
+
     /**
      * 检查版本更新
      */
@@ -118,6 +121,9 @@ public class MineFragment extends BaseFragment {
                                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(getActivity(), UpdateService.class);
+                                        intent.putExtra("apkUrl", url);
+                                        getActivity().startService(intent);
                                     }
                                 })
                                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
