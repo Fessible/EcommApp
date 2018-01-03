@@ -104,23 +104,15 @@ public class UpdateService extends Service {
 
     public PendingIntent getContentIntent() {
         File apkFile = new File(filePath);
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////        intent.setDataAndType(Uri.parse("file:" + apkFile.getAbsolutePath()),
-////                "application/vnd.android.package-archive");
-//        Log.e("tag", "apkurl: " + apkFile.getAbsolutePath());
-////        intent.setDataAndType(Uri.parse("file:"+apkFile.getAbsolutePath()), "application/vnd.android.package-archive");
-//        intent.setDataAndType(Uri.fromFile(apkFile), getMIMEType(apkFile));
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         if (!apkFile.exists()) {
             return null;
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
+        //Android 7.0
 //        Uri uri = Uri.parse("file://" + apkFile.toString());
        Uri uri =  FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getApplicationContext().getPackageName() + ".provider", apkFile);
         intent.setDataAndType(uri, "application/vnd.android.package-archive");
-        //在服务中开启activity必须设置flag,后面解释
+        //在服务中开启activity必须设置flag
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 //        startActivity(intent);
@@ -128,14 +120,5 @@ public class UpdateService extends Service {
         return pendingIntent;
     }
 
-    public static String getMIMEType(File file) {
-        String type = "*/*";
-        String name = file.getName();
-        int index = name.lastIndexOf('.');
-        if (index < 0) {
-            return type;
-        }
-        return null;
-    }
 }
 

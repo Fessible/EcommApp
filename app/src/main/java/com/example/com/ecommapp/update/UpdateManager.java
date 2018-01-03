@@ -31,6 +31,7 @@ public class UpdateManager {
     }
 
     public void startDownloads(String downloadUrl, String localPath, UpdateDownloadListener listener) {
+        //判断是否已经请求过
         if (request != null) {
             listener.onFinished(0,"");
             return;
