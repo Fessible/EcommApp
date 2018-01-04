@@ -37,6 +37,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -143,6 +144,9 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
     @BindView(R.id.txt_flash)
     TextView txtFlash;
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     SurfaceHolder surfaceHolder;
 
     private Result lastResult;
@@ -194,13 +198,9 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         // showHelpOnFirstLaunch();
+        toolbar.setNavigationOnClickListener(navigationOnClickListener);
     }
 
-
-    @OnClick(R.id.button_back)
-    public void onBack(View view) {
-        finish();
-    }
 
     @BindView(R.id.flash_btn)
     Button btnFlash;
@@ -219,6 +219,13 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         }
         isFlash = !isFlash;
     }
+
+    private View.OnClickListener navigationOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          finish();
+        }
+    };
 
     @OnClick(R.id.photo_btn)
     public void openPhoto(View view) {

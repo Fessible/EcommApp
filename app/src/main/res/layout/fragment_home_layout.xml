@@ -4,6 +4,10 @@
     android:background="@color/color_cccccc"
     android:orientation="vertical"
     >
+    <com.example.com.ecommapp.view.CompatToolbar
+        android:background="@color/color_fed952"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

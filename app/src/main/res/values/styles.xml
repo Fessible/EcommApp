@@ -1,7 +1,39 @@
 <resources>
+        <style name="Theme.Base" parent="Theme.AppCompat.NoActionBar">
+            <item name="android:windowBackground">@color/color_theme</item>
+            <!--填充信号栏-->
+            <!--<item name="windowTranslucentStatus">true</item>-->
+            <!-- -->
+            <item name="actionBarSize">53dp</item>
+            <item name="alertDialogTheme">@style/Alert</item>
+            <item name="alertDialogStyle">@style/AlertDialogStyle</item>
+        </style>
+
+        <style name="Theme" parent="Theme.Base" />
+
+        <style name="Alert">
+            <item name="android:windowFrame">@null</item>
+            <item name="android:windowIsFloating">true</item>
+            <item name="android:windowIsTranslucent">false</item>
+            <item name="android:windowNoTitle">true</item>
+            <item name="android:windowFullscreen">true</item>
+            <item name="android:windowContentOverlay">@null</item>
+            <item name="android:windowBackground">@android:color/transparent</item>
+            <item name="android:background">@android:color/transparent</item>
+            <item name="android:backgroundDimEnabled">true</item>
+        </style>
+
+        <style name="AlertDialogStyle">
+            <item name="android:layout">@layout/dialog_alert_material</item>
+        </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" >
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/color_white</item>
+        <item name="colorPrimaryDark">@color/color_white</item>
         <!-- Customize your theme here. -->
     </style>
     <!--zxing-->
@@ -47,14 +79,14 @@
 
 
     <style name="Widget.Design.Admin.AppBarLayout" parent="Widget.Design.AppBarLayout">
-        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:background">@color/color_fed952</item>
         <item name="elevation">0dp</item>
     </style>
 
     <style name="TextAppearance.Widget.Design.Admin.Toolbar.Title" parent="TextAppearance.Widget.Support.Platform.Toolbar.Title">
         <item name="android:maxWidth">180dp</item>
         <item name="android:textColor">@color/palette_white</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="TextAppearance.Widget.Support.Platform.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
