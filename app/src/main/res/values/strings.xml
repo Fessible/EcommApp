@@ -51,6 +51,13 @@
     <string name="hint_input_phone">请输入手机号</string>
     <string name="hint_input_password">请输入密码</string>
 
+    <string name="reset_password">重置密码</string>
+    <string name="hint_input_code">请输入手机验证码</string>
+    <string name="reset_code">发送验证码</string>
+    <string name="hint_input_new_password">请输入新密码</string>
+    <string name="hint_input_confirm_new_password">请再次输入新密码</string>
+    <string name="opt_confirm">确定</string>
+
     <!-- QR_Code -->
     <string name="button_ok">OK</string>
     <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the

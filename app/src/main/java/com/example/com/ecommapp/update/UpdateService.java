@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 
 import com.example.com.ecommapp.R;
 
@@ -110,7 +109,7 @@ public class UpdateService extends Service {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         //Android 7.0
 //        Uri uri = Uri.parse("file://" + apkFile.toString());
-       Uri uri =  FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getApplicationContext().getPackageName() + ".provider", apkFile);
+        Uri uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", apkFile);
         intent.setDataAndType(uri, "application/vnd.android.package-archive");
         //在服务中开启activity必须设置flag
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -119,6 +118,5 @@ public class UpdateService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;
     }
-
 }
 

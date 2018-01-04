@@ -29,6 +29,7 @@
     <color name="palette_white">@android:color/white</color>
     <color name="palette_white_light">#e8f0fd</color>
     <color name="palette_black">#000000</color>
+    <color name="palette_primary_light_color">#add4fb</color>
 
     <!-- QR_Code -->
     <!--<color name="viewfinder_mask">#60000000</color>

@@ -55,6 +55,10 @@
             android:name=".activity.TemplateActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ForgetPasswordActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".update.UpdateService"
