@@ -1,5 +1,6 @@
 package com.example.com.ecommapp.fragment.mine;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CheckableImageButton;
 import android.text.Editable;
@@ -63,6 +64,7 @@ public class LoginFragment extends BaseFragment {
         editPassword.addTextChangedListener(passWatcher);
         //添加软件盘监听,输入完成后点击键盘完成
         editPassword.setOnEditorActionListener(editorActionListener);
+        setImmersiveStatusBar(true, Color.WHITE);
     }
 
 
