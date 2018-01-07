@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.com.ecommapp.R;
 
@@ -35,6 +37,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract int getActivityResId();
 
     protected abstract void onViewCreated(Bundle savedInstanceState);
+
+    protected void showToast(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onDestroy() {

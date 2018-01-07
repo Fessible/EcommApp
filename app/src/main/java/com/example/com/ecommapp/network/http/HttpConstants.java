@@ -8,7 +8,7 @@ import android.sax.RootElement;
  */
 
 public class HttpConstants {
-    private final static String ROOT_URL = "http://rap.taobao.org/mockjs/29850/ecom";
+    public final static String ROOT_URL = "http://rap.taobao.org/mockjs/29850/ecom";
     /**
      * 首页请求接口
      */

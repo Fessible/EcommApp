@@ -37,9 +37,9 @@ public class HttpRequest {
 
     //获取验证码
     public static void recodeRequest(String phone, DisposeListener listener) {
-        RequestParam requestParam = new RequestParam();
-        requestParam.put("phone", phone);
-        Request request = CommonRequest.getInstance().createGet(HttpConstants.SMSCODE, requestParam);
+//        RequestParam requestParam = new RequestParam();
+//        requestParam.put("phone", phone);
+        Request request = CommonRequest.getInstance().createGet(HttpConstants.SMSCODE+"/"+phone);
         CommOkhttpClient.getInstance().sendRequest(request, new DisposableHandler(BaseModel.class, listener));
     }
 

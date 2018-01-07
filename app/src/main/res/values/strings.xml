@@ -50,6 +50,7 @@
     <string name="login_forget_pass">忘记密码</string>
     <string name="hint_input_phone">请输入手机号</string>
     <string name="hint_input_password">请输入密码</string>
+    <string name="count_down_timer_reset_code_format">%1$d 秒</string>
 
     <string name="reset_password">重置密码</string>
     <string name="hint_input_code">请输入手机验证码</string>

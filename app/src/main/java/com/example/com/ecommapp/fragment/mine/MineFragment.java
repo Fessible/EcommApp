@@ -63,6 +63,7 @@ public class MineFragment extends BaseFragment {
     TextView txtUserName;
 
     private MineAdapter adapter;
+    public final static int REQUEST_CODE = 1;
 
     @Override
     protected int getFragmentLayout() {
@@ -150,6 +151,21 @@ public class MineFragment extends BaseFragment {
 
     @OnClick(R.id.login_view)
     public void Login(View view) {
-        IntentUtil.startTemplateActivity(MineFragment.this, LoginFragment.class, LoginFragment.TAG_Login_FRAGMENT);
+        IntentUtil.startTemplateActivityForResult(MineFragment.this, LoginFragment.class, LoginFragment.TAG_Login_FRAGMENT,REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE:
+                showLoginView();
+                break;
+        }
+    }
+
+    private void showLoginView() {
+        loginLayout.setVisibility(View.GONE);
+        loginedLayout.setVisibility(View.VISIBLE);
     }
 }

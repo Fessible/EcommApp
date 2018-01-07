@@ -1,5 +1,6 @@
 package com.example.com.ecommapp.fragment.mine;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CheckableImageButton;
@@ -18,10 +19,18 @@ import android.widget.TextView;
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.activity.ForgetPasswordActivity;
 import com.example.com.ecommapp.base.BaseFragment;
+import com.example.com.ecommapp.module.LoginModel;
+import com.example.com.ecommapp.network.http.HttpRequest;
 import com.example.com.ecommapp.util.IntentUtil;
+import com.example.com.support.okhttp.listener.DisposeListener;
+import com.example.com.support.okhttp.request.CommonRequest;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static android.app.Activity.RESULT_OK;
+import static com.example.com.ecommapp.activity.ForgetPasswordActivity.KEY_PASSWORD;
+import static com.example.com.ecommapp.activity.ForgetPasswordActivity.KEY_PHONE;
 
 /**
  * Created by rhm on 2017/12/26.
@@ -29,6 +38,8 @@ import butterknife.OnClick;
 
 public class LoginFragment extends BaseFragment {
     public static final String TAG_Login_FRAGMENT = "LOGIN_FRAGMENT";
+    public static final int REQUEST_CODE = 1;
+
     @BindView(R.id.logo)
     ImageView logo;
 
@@ -79,8 +90,22 @@ public class LoginFragment extends BaseFragment {
     @OnClick(R.id.login)
     public void login() {
         if (editPhone != null && editPassword != null) {
-            CharSequence phone = editPhone.getText();
-            CharSequence password = editPassword.getText();
+            String phone = editPhone.getText().toString();
+            String password = editPassword.getText().toString();
+            HttpRequest.loginRequest(phone, password, new DisposeListener() {
+                @Override
+                public void onSuccess(Object responseObj) {
+                    LoginModel loginModel = (LoginModel) responseObj;
+                    showShortToast(loginModel.emsg);
+                    getActivity().setResult(RESULT_OK);
+                    getActivity().finish();
+                }
+
+                @Override
+                public void onFailure(String msg) {
+                    showShortToast(msg);
+                }
+            });
         }
 
     }
@@ -104,7 +129,7 @@ public class LoginFragment extends BaseFragment {
 
     @OnClick(R.id.forgot_password)
     public void forgetPassword() {
-        IntentUtil.startActivity(LoginFragment.this, ForgetPasswordActivity.class,ForgetPasswordActivity.TAG_FORGET_PASSWORD_ACTIVITY);
+        IntentUtil.startActivityForResult(LoginFragment.this, ForgetPasswordActivity.class, ForgetPasswordActivity.TAG_FORGET_PASSWORD_ACTIVITY, REQUEST_CODE);
     }
 
     private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
@@ -122,6 +147,19 @@ public class LoginFragment extends BaseFragment {
         }
     };
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE:
+                String phone = data.getStringExtra(KEY_PHONE);
+                String password = data.getStringExtra(KEY_PASSWORD);
+                editPhone.setText(phone);
+                editPassword.setText(password);
+                login();
+                break;
+        }
+    }
 
     private TextWatcher phoneWatcher = new TextWatcher() {
         @Override
