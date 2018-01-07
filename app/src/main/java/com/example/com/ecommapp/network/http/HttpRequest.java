@@ -29,4 +29,10 @@ public class HttpRequest {
         CommOkhttpClient.getInstance().sendRequest(request, new DisposableHandler(VersionModel.class, listener));
 
     }
+
+    //获取验证码
+
+    //登录
+
+    //重置密码
 }

@@ -78,7 +78,6 @@ public class MineFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClick(onItemClick);
-        setImmersiveStatusBar(true, Color.WHITE);
     }
 
     private MineAdapter.onItemClick onItemClick = new MineAdapter.onItemClick() {

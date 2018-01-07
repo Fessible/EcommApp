@@ -18,6 +18,5 @@ public class MessageFragment extends BaseFragment {
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-
     }
 }
