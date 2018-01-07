@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by rhm on 2017/12/4.
  */
 
-class RequestParam {
+public class RequestParam {
     //普通参数
     public ConcurrentHashMap<String, String> urlParam = new ConcurrentHashMap<>();
     //文件参数

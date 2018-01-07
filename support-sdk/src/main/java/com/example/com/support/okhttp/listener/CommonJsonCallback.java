@@ -2,6 +2,7 @@ package com.example.com.support.okhttp.listener;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.example.com.support.okhttp.exception.HttpException;
 import com.google.gson.Gson;
@@ -60,6 +61,7 @@ public class CommonJsonCallback implements Callback {
     @Override
     public void onResponse(Call call, final Response response) throws IOException {
         final String res = response.body().string();
+        Log.d("http", res);
         mDeliveryHandler.post(new Runnable() {
             @Override
             public void run() {
