@@ -3,6 +3,7 @@ package com.example.com.ecommapp.fragment.mine;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +19,8 @@ import com.example.com.ecommapp.adapter.MineAdapter;
 import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.module.version.VersionModel;
 import com.example.com.ecommapp.network.http.HttpRequest;
+import com.example.com.ecommapp.onekeyshare.OnekeyShare;
+import com.example.com.ecommapp.onekeyshare.ShareContentCustomizeCallback;
 import com.example.com.ecommapp.update.UpdateService;
 import com.example.com.ecommapp.util.IntentUtil;
 import com.example.com.ecommapp.util.Utils;
@@ -25,6 +28,9 @@ import com.example.com.support.okhttp.listener.DisposeListener;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.wechat.friends.Wechat;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.com.ecommapp.adapter.MineAdapter.STATE_QCODE;
@@ -89,6 +95,29 @@ public class MineFragment extends BaseFragment {
                     IntentUtil.startTemplateActivity(MineFragment.this, SettingFragment.class, SettingFragment.TAG_SETTING_FRAGMENT);
                     break;
                 case STATE_SHARE:
+//                    Platform.ShareParams params = new Platform.ShareParams();
+////                    params.setShareType(Platform.SHARE_WEBPAGE);
+////                    params.setUrl("http://www.mob.com");
+//                    Bitmap logo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+//                    params.setShareType(Platform.SHARE_IMAGE);
+//                    params.setText("text");
+//                    params.setTitle("title");
+//
+//                    Platform wechat = ShareSDK.getPlatform(Wechat.NAME);
+//                    wechat.share(params);
+                    OnekeyShare oks = new OnekeyShare();
+//                    oks.setImageUrl("http://ww1.sinaimg.cn/large/83029c1egy1fn6w7lq9aoj208c08cmx5.jpg");
+                    oks.setText("我是内容");
+                    oks.setText("分享");
+                    oks.setUrl("https://fir.im/pl8r");
+                    oks.show(getActivity());
+                    oks.setShareContentCustomizeCallback(new ShareContentCustomizeCallback() {
+                        @Override
+                        public void onShare(Platform platform, Platform.ShareParams paramsToShare) {
+
+                        }
+                    });
+
                     break;
                 case STATE_QCODE:
                     Bitmap b = Utils.createQRCode(300, 300, "15500");
@@ -151,7 +180,7 @@ public class MineFragment extends BaseFragment {
 
     @OnClick(R.id.login_view)
     public void Login(View view) {
-        IntentUtil.startTemplateActivityForResult(MineFragment.this, LoginFragment.class, LoginFragment.TAG_Login_FRAGMENT,REQUEST_CODE);
+        IntentUtil.startTemplateActivityForResult(MineFragment.this, LoginFragment.class, LoginFragment.TAG_Login_FRAGMENT, REQUEST_CODE);
     }
 
     @Override
