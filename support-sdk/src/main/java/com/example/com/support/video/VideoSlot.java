@@ -1,19 +1,20 @@
-package com.example.com.support;
+package com.example.com.support.video;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.ViewGroup;
 
+import com.example.com.support.FullVideoDialog;
 import com.example.com.support.util.SDKConstant;
+import com.example.com.support.video.CustomVideoView;
 
 /**
  * 业务逻辑层
  * Created by rhm on 2017/12/21.
  */
 
-public class VideoSlot implements CustomVideoView.VideoPlayerListener {
+public class VideoSlot implements com.example.com.support.video.CustomVideoView.CustomVideoView.VideoPlayerListener {
     private Context context;
-    private CustomVideoView mVideoView;
+    private com.example.com.support.video.CustomVideoView.CustomVideoView mVideoView;
     private ViewGroup mParentView;
     private String path;
 
@@ -25,7 +26,7 @@ public class VideoSlot implements CustomVideoView.VideoPlayerListener {
     }
 
     private void initVideoView() {
-        mVideoView = new CustomVideoView(context, mParentView);
+        mVideoView = new CustomVideoView.CustomVideoView(context, mParentView);
         mVideoView.setDataSource(path);
         mVideoView.setVideoViewListener(this);
         mParentView.addView(mVideoView);

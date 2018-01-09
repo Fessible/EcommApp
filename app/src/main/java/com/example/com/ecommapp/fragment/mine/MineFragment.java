@@ -21,6 +21,7 @@ import com.example.com.ecommapp.module.version.VersionModel;
 import com.example.com.ecommapp.network.http.HttpRequest;
 import com.example.com.ecommapp.onekeyshare.OnekeyShare;
 import com.example.com.ecommapp.onekeyshare.ShareContentCustomizeCallback;
+import com.example.com.ecommapp.share.ShareDialog;
 import com.example.com.ecommapp.update.UpdateService;
 import com.example.com.ecommapp.util.IntentUtil;
 import com.example.com.ecommapp.util.Utils;
@@ -33,6 +34,7 @@ import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.wechat.friends.Wechat;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_OK;
 import static com.example.com.ecommapp.adapter.MineAdapter.STATE_QCODE;
 import static com.example.com.ecommapp.adapter.MineAdapter.STATE_SHARE;
 import static com.example.com.ecommapp.adapter.MineAdapter.STATE_VERSION;
@@ -70,6 +72,7 @@ public class MineFragment extends BaseFragment {
 
     private MineAdapter adapter;
     public final static int REQUEST_CODE = 1;
+    public final String SHARE_URL = "https://fir.im/pl8r";
 
     @Override
     protected int getFragmentLayout() {
@@ -105,19 +108,20 @@ public class MineFragment extends BaseFragment {
 //
 //                    Platform wechat = ShareSDK.getPlatform(Wechat.NAME);
 //                    wechat.share(params);
-                    OnekeyShare oks = new OnekeyShare();
+//                    OnekeyShare oks = new OnekeyShare();
 //                    oks.setImageUrl("http://ww1.sinaimg.cn/large/83029c1egy1fn6w7lq9aoj208c08cmx5.jpg");
-                    oks.setText("我是内容");
-                    oks.setText("分享");
-                    oks.setUrl("https://fir.im/pl8r");
-                    oks.show(getActivity());
-                    oks.setShareContentCustomizeCallback(new ShareContentCustomizeCallback() {
-                        @Override
-                        public void onShare(Platform platform, Platform.ShareParams paramsToShare) {
+//                    oks.setText("我是内容");
+//                    oks.setTitle("分享");
+//                    oks.setUrl("https://fir.im/pl8r");
+//                    oks.show(getActivity());
+//                    oks.setShareContentCustomizeCallback(new ShareContentCustomizeCallback() {
+//                        @Override
+//                        public void onShare(Platform platform, Platform.ShareParams paramsToShare) {
+//
+//                        }
+//                    });
 
-                        }
-                    });
-
+                    shareFriend();
                     break;
                 case STATE_QCODE:
                     Bitmap b = Utils.createQRCode(300, 300, "15500");
@@ -132,6 +136,17 @@ public class MineFragment extends BaseFragment {
         }
 
     };
+
+    private void shareFriend() {
+        ShareDialog dialog = new ShareDialog(getContext());
+        dialog.setShareType(Platform.SHARE_WEBPAGE);
+        dialog.setShareTitle(getContext().getString(R.string.share_title));
+        dialog.setTitlUrl(SHARE_URL);
+        dialog.setShareText(getContext().getString(R.string.share_content));
+        dialog.setShareSite("fir");
+        dialog.setSiteUrl(SHARE_URL);
+        dialog.show();
+    }
 
     private String url = "http://imtt.dd.qq.com/16891/6352ED6982A630FF770972495624240A.apk?fsname=cn.andouya_3.2.0406_233.apk&csr=1bbd";
 
@@ -186,10 +201,12 @@ public class MineFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_CODE:
-                showLoginView();
-                break;
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE:
+                    showLoginView();
+                    break;
+            }
         }
     }
 

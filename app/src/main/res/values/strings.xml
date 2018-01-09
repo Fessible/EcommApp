@@ -17,6 +17,7 @@
     <string name="search_no_title">"抱歉,没有找到与 \""</string>
     <string name="search_no_end">"\" 相关的宝贝"</string>
     <string name="search_tip">您可以输入宝贝代码，简称或者拼音首字母开始查找</string>
+    <string name="share_weibo">微博</string>
     <string name="share_weixin">微信</string>
     <string name="share_weixin_moment">朋友圈</string>
     <string name="share_qq">QQ</string>
@@ -58,6 +59,11 @@
     <string name="hint_input_new_password">请输入新密码</string>
     <string name="hint_input_confirm_new_password">请再次输入新密码</string>
     <string name="opt_confirm">确定</string>
+    <string name="share_title">电商小应用</string>
+    <string name="share_content">欢迎使用电商小应用，下载地址https://fir.im/pl8r</string>
+    <string name="share_error">分享失败</string>
+    <string name="share_complete">分享成功</string>
+    <string name="share_cancel">分享取消</string>
 
     <!-- QR_Code -->
     <string name="button_ok">OK</string>

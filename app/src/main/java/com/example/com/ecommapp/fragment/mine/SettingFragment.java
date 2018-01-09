@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.util.SharedPreferenceManager;
-import com.example.com.support.VideoManagerParameters;
+import com.example.com.support.video.VideoManagerParameters;
 import com.example.com.support.util.SDKConstant;
 
 import butterknife.BindView;

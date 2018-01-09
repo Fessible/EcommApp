@@ -15,13 +15,10 @@ import android.widget.TextView;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
-import com.example.com.support.VideoManager;
 import com.example.com.support.imageloader.ImageLoaderManager;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**

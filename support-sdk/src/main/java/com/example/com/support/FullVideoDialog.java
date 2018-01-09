@@ -11,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.example.com.glide.R;
-import com.example.com.support.module.Advalue;
+import com.example.com.support.video.CustomVideoView;
 
 /**
  * 全屏显示视频
  * Created by rhm on 2017/12/22.
  */
 
-public class FullVideoDialog extends Dialog implements CustomVideoView.VideoPlayerListener {
+public class FullVideoDialog extends Dialog implements com.example.com.support.video.CustomVideoView.CustomVideoView.VideoPlayerListener {
 
     private RelativeLayout rootView;
     private RelativeLayout parentView;
@@ -29,10 +29,10 @@ public class FullVideoDialog extends Dialog implements CustomVideoView.VideoPlay
     private FullToSmallListener listener;
     private int position;
     private boolean isFirst = true;
-    private CustomVideoView videoView;
+    private com.example.com.support.video.CustomVideoView.CustomVideoView videoView;
     private boolean isFocus;
 
-    public FullVideoDialog(@NonNull Context context, CustomVideoView videoView) {
+    public FullVideoDialog(@NonNull Context context, CustomVideoView.CustomVideoView videoView) {
         super(context, R.style.dialog_full_screen);//保证dialog全屏
         this.videoView = videoView;
     }

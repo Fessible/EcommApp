@@ -7,9 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.RelativeLayout;
 
 import com.example.com.ecommapp.R;
-import com.example.com.support.CustomVideoView;
-import com.example.com.support.FullVideoDialog;
-import com.example.com.support.VideoManager;
 
 /**
  * Created by rhm on 2017/12/19.

@@ -1,4 +1,4 @@
-package com.example.com.support;
+package com.example.com.support.video;
 
 import android.content.Context;
 import android.view.ViewGroup;

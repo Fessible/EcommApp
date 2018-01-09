@@ -20,6 +20,7 @@ import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.activity.ForgetPasswordActivity;
 import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.module.LoginModel;
+import com.example.com.ecommapp.module.user.User;
 import com.example.com.ecommapp.network.http.HttpRequest;
 import com.example.com.ecommapp.util.IntentUtil;
 import com.example.com.support.okhttp.listener.DisposeListener;
@@ -97,6 +98,7 @@ public class LoginFragment extends BaseFragment {
                 public void onSuccess(Object responseObj) {
                     LoginModel loginModel = (LoginModel) responseObj;
                     showShortToast(loginModel.emsg);
+
                     getActivity().setResult(RESULT_OK);
                     getActivity().finish();
                 }
