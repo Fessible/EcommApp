@@ -152,14 +152,16 @@ public class LoginFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_CODE:
-                String phone = data.getStringExtra(KEY_PHONE);
-                String password = data.getStringExtra(KEY_PASSWORD);
-                editPhone.setText(phone);
-                editPassword.setText(password);
-                login();
-                break;
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE:
+                    String phone = data.getStringExtra(KEY_PHONE);
+                    String password = data.getStringExtra(KEY_PASSWORD);
+                    editPhone.setText(phone);
+                    editPassword.setText(password);
+                    login();
+                    break;
+            }
         }
     }
 

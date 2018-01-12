@@ -159,7 +159,7 @@ public class HomeAdapter extends BaseAdapter {
                 mViewHolder.mPriceView.setText(value.price);
                 mViewHolder.mFromView.setText(value.from);
                 mViewHolder.mZanView.setText(mContext.getString(R.string.dian_zan).concat(String.valueOf(value.zan)));
-                imageLoader.displayImage(mViewHolder.mProductView, value.url.get(0));
+//                imageLoader.displayImage(mViewHolder.mProductView, value.url.get(0));
                 break;
             case TYPE_VIEW_PAGER:
                 List<String> list = value.url;

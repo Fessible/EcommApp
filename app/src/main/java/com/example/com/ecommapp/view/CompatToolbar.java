@@ -2,14 +2,14 @@ package com.example.com.ecommapp.view;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 /**
  * 沉浸式、版本兼容的Toolbar，状态栏透明.
  */
-public class CompatToolbar extends Toolbar {
+public class CompatToolbar extends LinearLayout {
 
     public CompatToolbar(Context context) {
         this(context, null);
@@ -35,6 +35,7 @@ public class CompatToolbar extends Toolbar {
     
     public int getStatusBarHeight() {
         int statusBarHeight = 0;
+        //获取status_bar_height资源的ID
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             statusBarHeight = getResources().getDimensionPixelSize(resourceId);

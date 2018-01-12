@@ -1,6 +1,10 @@
 <resources>
-        <style name="Theme.Base" parent="Theme.AppCompat.NoActionBar">
+        <style name="Theme.Base" parent="Theme.AppCompat.Light.NoActionBar">
             <item name="android:windowBackground">@color/color_theme</item>
+            <item name="colorPrimaryDark">@color/color_fed952</item>
+            <item name="colorPrimary">@color/color_fed952</item>
+            <item name="colorAccent">@color/color_fed952</item>
+            <item name="colorControlNormal">@color/color_fed952</item>
             <!--填充信号栏-->
             <!--<item name="windowTranslucentStatus">true</item>-->
             <!-- -->

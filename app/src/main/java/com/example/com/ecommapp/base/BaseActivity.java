@@ -1,5 +1,6 @@
 package com.example.com.ecommapp.base;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -9,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -39,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void onViewCreated(Bundle savedInstanceState);
 
     protected void showToast(String msg) {
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

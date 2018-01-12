@@ -10,6 +10,5 @@ import java.util.List;
  */
 
 public class RecommendModel extends BaseModel {
-
     public List<RecommendValue> data;
 }

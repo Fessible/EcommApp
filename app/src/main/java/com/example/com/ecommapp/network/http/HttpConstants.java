@@ -1,14 +1,14 @@
 package com.example.com.ecommapp.network.http;
 
-import android.sax.RootElement;
-
 /**
  * 所有请求的url地址
  * Created by rhm on 2017/11/30.
  */
 
 public class HttpConstants {
-    public final static String ROOT_URL = "http://rap.taobao.org/mockjs/29850/ecom";
+//    public final static String ROOT_URL = "http://rap.taobao.org/mockjs/29850/ecom";
+    public final static String ROOT_URL = "http://rap2api.taobao.org/app/mock/3614/GET//ecom";
+
     /**
      * 首页请求接口
      */

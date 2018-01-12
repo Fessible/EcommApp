@@ -150,8 +150,8 @@ public class ForgetPasswordActivity extends BaseActivity {
             resetCode.setEnabled(resetCodeIdle.get()
                     && !TextUtils.isEmpty(textInputPhone.getText())
                     && textInputPhone.getText().length() == PHONE_LENGTH); // 在号码框长度为11时可发送验证码
+            resetCode.setText(getString(R.string.reset_code));
         }
-        resetCode.setText(R.string.reset_code);
     }
 
     private void updateConfirmStatus() {
