@@ -75,7 +75,7 @@ public abstract class BaseFragment extends Fragment {
         setTranslucentStatus();//设置透明
         if (fontIconDark) {//字体颜色变深
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    || OsUtil.isMIUI()
+                    || OsUtil.isMiui()
                     || OsUtil.isFlyme()) {
                 setStatusBarFontIconDark(true);
             } else {
@@ -101,7 +101,6 @@ public abstract class BaseFragment extends Fragment {
         }
         return statusBarHeight;
     }
-
 
     /**
      * 设置状态栏透明

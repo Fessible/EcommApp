@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
 import com.example.com.support.imageloader.ImageLoaderManager;
+import com.example.com.support.video.NiceVideoPlayer;
+import com.example.com.support.video.TxVideoPlayerController;
 
 import java.util.List;
 
@@ -83,7 +85,6 @@ public class HomeAdapter extends BaseAdapter {
     }
 
     /*************************init View*****************************************/
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
@@ -96,6 +97,7 @@ public class HomeAdapter extends BaseAdapter {
                     view = inflater.inflate(R.layout.item_video_layout, parent, false);
                     mViewHolder.mVieoContentLayout = (RelativeLayout)
                             view.findViewById(R.id.video_ad_layout);
+                    mViewHolder.mVideoPlayer = view.findViewById(R.id.video_view);
                     mViewHolder.mShareView = (ImageView) view.findViewById(R.id.item_share_view);
                     break;
                 case TYPE_CARD_MULTI:
@@ -136,8 +138,12 @@ public class HomeAdapter extends BaseAdapter {
         mViewHolder.mFooterView.setText(value.text);
         switch (type) {
             case TYPE_VEDIO:
-//                String path = "android.resource://" + mContext.getPackageName() + "/" + R.raw.baishi;
-//                VideoManager videoManager = new VideoManager(mContext,mViewHolder.mVieoContentLayout, value.resource);
+                TxVideoPlayerController controller = new TxVideoPlayerController(mContext);
+                controller.setLength(98000);
+                controller.setUrl(value.resource);
+                controller.setTitle("");
+                controller.setImage(R.drawable.background);
+                mViewHolder.mVideoPlayer.setController(controller);
                 break;
             case TYPE_CARD_MULTI:
                 mViewHolder.mPriceView.setText(value.price);
@@ -159,7 +165,7 @@ public class HomeAdapter extends BaseAdapter {
                 mViewHolder.mPriceView.setText(value.price);
                 mViewHolder.mFromView.setText(value.from);
                 mViewHolder.mZanView.setText(mContext.getString(R.string.dian_zan).concat(String.valueOf(value.zan)));
-//                imageLoader.displayImage(mViewHolder.mProductView, value.url.get(0));
+                imageLoader.displayImage(mViewHolder.mProductView, value.url.get(0));
                 break;
             case TYPE_VIEW_PAGER:
                 List<String> list = value.url;
@@ -220,6 +226,9 @@ public class HomeAdapter extends BaseAdapter {
         //View Pager属性
 
         ViewPager mViewPager;
+
+        //video
+        NiceVideoPlayer mVideoPlayer;
 
 
 

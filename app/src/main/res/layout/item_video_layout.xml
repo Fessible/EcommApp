@@ -46,13 +46,14 @@
     <RelativeLayout
         android:id="@+id/video_ad_layout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@id/item_logo_view" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_logo_view">
 
-    <VideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <com.example.com.support.video.NiceVideoPlayer
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="180dp" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/item_footer_view"
@@ -60,10 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/video_ad_layout"
         android:layout_marginBottom="12dp"
-        android:layout_marginTop="12dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:text="杨洋郑爽“聊”破次元盛,甜蜜演绎《微微一笑很优酷》优酷独家热播中"
         android:textColor="@color/color_333333"
         android:textSize="16sp" />
 </RelativeLayout>
