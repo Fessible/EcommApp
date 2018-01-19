@@ -3,41 +3,46 @@ package com.example.com.ecommapp.fragment.home;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.activity.PhotoActivity;
 import com.example.com.ecommapp.adapter.HomeAdapter;
+import com.example.com.ecommapp.adapter.HomeFragmentAdapter;
 import com.example.com.ecommapp.base.BaseFragment;
 import com.example.com.ecommapp.module.recommand.RecommendModel;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
 import com.example.com.ecommapp.network.http.HttpRequest;
 import com.example.com.ecommapp.zxing.app.CaptureActivity;
 import com.example.com.support.okhttp.listener.DisposeListener;
+import com.example.com.support.video.NiceVideoPlayer;
+import com.example.com.support.video.NiceVideoPlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.jzvd.JZVideoPlayer;
 
 import static com.example.com.ecommapp.activity.PhotoActivity.PHOTO_VIEW;
-import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_CARD;
-import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_CARD_MULTI;
-import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_VEDIO;
+import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_VIDEO;
 
 /**
  * Created by rhm on 2017/10/31.
  */
 
-public class HomeFragment extends BaseFragment  {
+public class HomeFragment extends BaseFragment {
     private final static String TAG = "HomeFragment";
     @BindView(R.id.category_view)
     TextView txtCategory;
@@ -48,18 +53,14 @@ public class HomeFragment extends BaseFragment  {
     @BindView(R.id.loading_view)
     ImageView loadView;
 
-    @BindView(R.id.list_view)
-    ListView listView;
 
     @BindView(R.id.search_view)
     TextView txtSearch;
 
-    private RadioGroup radioGroup;
-    private RadioButton rbHome;
-    private RadioButton rbMessage;
-    private RadioButton rbMine;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
 
-    private HomeAdapter adapter;
+    private HomeFragmentAdapter adapter;
     private RecommendModel recommendModel;
     private List<RecommendValue> mData = new ArrayList<>();
 
@@ -70,9 +71,35 @@ public class HomeFragment extends BaseFragment  {
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        adapter = new HomeAdapter(getActivity(), mData);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(itemClickListener);
+        adapter = new HomeFragmentAdapter(getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
+            @Override
+            public void onViewRecycled(RecyclerView.ViewHolder holder) {
+                NiceVideoPlayer niceVideoPlayer = adapter.getNiceVideoPlayer();
+                if (niceVideoPlayer == NiceVideoPlayerManager.getsInstance().getCurrentNiceVideoPlayer()) {
+                    NiceVideoPlayerManager.getsInstance().releaseNiceVideoPlayer();
+                }
+            }
+        });
+//        adapter = new HomeAdapter(getActivity(), mData);
+//        listView.setAdapter(adapter);
+//        listView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+//            @Override
+//            public void onViewAttachedToWindow(View v) {
+//
+//            }
+//
+//            @Override
+//            public void onViewDetachedFromWindow(View v) {
+//                NiceVideoPlayer niceVideoPlayer = v.findViewById(R.id.video_view);
+//                if (niceVideoPlayer != null) {
+//                    niceVideoPlayer.release();
+//                }
+//            }
+//        });
         AnimationDrawable animationDrawable = (AnimationDrawable) loadView.getDrawable();
         animationDrawable.start();
         requestRecommend();
@@ -88,17 +115,17 @@ public class HomeFragment extends BaseFragment  {
         }
     };
 
-    private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            RecommendValue value = (RecommendValue) adapter.getItem(position);
-            if (value.type != TYPE_VEDIO) {
-                Intent intent = new Intent(getContext(), PhotoActivity.class);
-                intent.putStringArrayListExtra(PHOTO_VIEW, (ArrayList<String>) value.url);
-                startActivity(intent);
-            }
-        }
-    };
+//    private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            RecommendValue value = (RecommendValue) adapter.getItem(position);
+//            if (value.type != TYPE_VIDEO) {
+//                Intent intent = new Intent(getContext(), PhotoActivity.class);
+//                intent.putStringArrayListExtra(PHOTO_VIEW, (ArrayList<String>) value.url);
+//                startActivity(intent);
+//            }
+//        }
+//    };
 
     /**
      * 请求首页数据
@@ -128,9 +155,12 @@ public class HomeFragment extends BaseFragment  {
         if (recommendModel.data != null && recommendModel.data.size() > 0) {
             mData = recommendModel.data;
             loadView.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
             adapter.setData(mData);
             adapter.notifyDataSetChanged();
+//            listView.setVisibility(View.VISIBLE);
+//            adapter.setData(mData);
+//            adapter.notifyDataSetChanged();
         } else {
             showErrorView();
         }
@@ -143,8 +173,23 @@ public class HomeFragment extends BaseFragment  {
     }
 
     @OnClick(R.id.qrcode_view)
-    public void clickQrcode(View view){
+    public void clickQrcode(View view) {
         Intent intent = new Intent(getActivity(), CaptureActivity.class);
         startActivity(intent);
     }
+
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+////        NiceVideoPlayerManager.getsInstance().releaseNiceVideoPlayer();
+//    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        JZVideoPlayer.releaseAllVideos();
+    }
+
+
 }

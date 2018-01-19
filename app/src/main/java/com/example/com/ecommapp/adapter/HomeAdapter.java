@@ -17,6 +17,7 @@ import com.example.com.ecommapp.R;
 import com.example.com.ecommapp.module.recommand.RecommendValue;
 import com.example.com.support.imageloader.ImageLoaderManager;
 import com.example.com.support.video.NiceVideoPlayer;
+import com.example.com.support.video.NiceVideoPlayerManager;
 import com.example.com.support.video.TxVideoPlayerController;
 
 import java.util.List;
@@ -24,14 +25,14 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * 首页ListView的适配器
+ * 废弃
  * Created by rhm on 2017/12/3.
  */
 
 public class HomeAdapter extends BaseAdapter {
     //类型
     private final static int TYPE_COUNT = 4;
-    public final static int TYPE_VEDIO = 0x00;
+    public final static int TYPE_VIDEO = 0x00;
     public final static int TYPE_CARD = 0x02;
     public final static int TYPE_CARD_MULTI = 0x01;
     public final static int TYPE_VIEW_PAGER = 0x03;
@@ -52,6 +53,7 @@ public class HomeAdapter extends BaseAdapter {
     public void setMultiClickListener(OnMultiClickListener listener) {
         this.multiClickListener = listener;
     }
+
 
     @Override
     public int getCount() {
@@ -93,12 +95,13 @@ public class HomeAdapter extends BaseAdapter {
         View view = convertView;
         if (view == null) {
             switch (type) {
-                case TYPE_VEDIO:
+                case TYPE_VIDEO:
                     view = inflater.inflate(R.layout.item_video_layout, parent, false);
                     mViewHolder.mVieoContentLayout = (RelativeLayout)
                             view.findViewById(R.id.video_ad_layout);
-                    mViewHolder.mVideoPlayer = view.findViewById(R.id.video_view);
+//                    mViewHolder.mVideoPlayer = view.findViewById(R.id.video_view);
                     mViewHolder.mShareView = (ImageView) view.findViewById(R.id.item_share_view);
+                    NiceVideoPlayerManager.getsInstance().setCurrentNiceVideoPlayer(mViewHolder.mVideoPlayer);
                     break;
                 case TYPE_CARD_MULTI:
                     view = inflater.inflate(R.layout.item_multi_photo, parent, false);
@@ -137,9 +140,8 @@ public class HomeAdapter extends BaseAdapter {
         mViewHolder.mInfoView.setText((mContext.getString(R.string.tian_qian, value.info)));
         mViewHolder.mFooterView.setText(value.text);
         switch (type) {
-            case TYPE_VEDIO:
+            case TYPE_VIDEO:
                 TxVideoPlayerController controller = new TxVideoPlayerController(mContext);
-                controller.setLength(98000);
                 controller.setUrl(value.resource);
                 controller.setTitle("");
                 controller.setImage(R.drawable.background);
@@ -178,11 +180,11 @@ public class HomeAdapter extends BaseAdapter {
     }
 
 
-    public interface OnMultiClickListener{
+    public interface OnMultiClickListener {
         void onClick(List<String> url);
     }
 
-    static class ViewHolder {
+    public static class ViewHolder {
 
         //所有Card共有属性
 
@@ -228,8 +230,7 @@ public class HomeAdapter extends BaseAdapter {
         ViewPager mViewPager;
 
         //video
-        NiceVideoPlayer mVideoPlayer;
-
+       public NiceVideoPlayer mVideoPlayer;
 
 
     }

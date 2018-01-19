@@ -204,6 +204,13 @@ public class TxVideoPlayerController extends NiceVideoPlayerController implement
                 startUpdateProgressTimer();
                 break;
             case STATE_PLAYING://播放状态
+                mImage.setVisibility(GONE);
+                mError.setVisibility(GONE);
+                mCompleted.setVisibility(GONE);
+                mTop.setVisibility(GONE);
+                mBottom.setVisibility(GONE);
+                mCenterStart.setVisibility(GONE);
+                mLength.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
                 mRestartPause.setImageResource(R.drawable.ic_player_pause);
                 startDismissTopBottomTimer();//显示并自动消失控制栏
