@@ -32,14 +32,14 @@ public class NiceVideoPlayerManager {
         }
     }
 
-    public void suspendNiceVideoPlayer(){
+    public void suspendNiceVideoPlayer() {
         if (mVideoPlayer != null && (mVideoPlayer.isPlaying() || mVideoPlayer.isBufferingPlaying())) {
             mVideoPlayer.pause();
         }
     }
 
 
-    public void resumeNiceVideoPlayer(){
+    public void resumeNiceVideoPlayer() {
         //手动暂停或者缓存暂停时 恢复播放
         if (mVideoPlayer != null && (mVideoPlayer.isPaused() || mVideoPlayer.isBufferingPaused())) {
             mVideoPlayer.restart();
@@ -51,5 +51,16 @@ public class NiceVideoPlayerManager {
             mVideoPlayer.release();
             mVideoPlayer = null;
         }
+    }
+
+    public boolean onBackPressed() {
+        if (mVideoPlayer != null) {
+            if (mVideoPlayer.isFullScreen()) {
+                return mVideoPlayer.exitFullScreen();
+            } else if (mVideoPlayer.isTinyWindow()) {
+                return mVideoPlayer.exitTinyWindow();
+            }
+        }
+        return false;
     }
 }

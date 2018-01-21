@@ -1,13 +1,16 @@
 package com.example.com.ecommapp.base;
 
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +31,7 @@ import butterknife.Unbinder;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private Unbinder unbinder;
+    public final static int WRITE_READ_EXTERNAL_CODE =1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,4 +94,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    //申请指定的权限
+    public void requestPermission(int code, String... permissions) {
+        ActivityCompat.requestPermissions(this, permissions, code);
+    }
+
+    //判断是否具有指定权限
+    public boolean hasPermission(String... permissions) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case WRITE_READ_EXTERNAL_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    doSDCardPermission();
+                }
+                break;
+        }
+    }
+
+    public void doSDCardPermission(){}
 }

@@ -12,6 +12,7 @@ import com.example.com.ecommapp.base.BaseActivity;
 import com.example.com.ecommapp.fragment.home.HomeFragment;
 import com.example.com.ecommapp.fragment.message.MessageFragment;
 import com.example.com.ecommapp.fragment.mine.MineFragment;
+import com.example.com.support.video.NiceVideoPlayerManager;
 
 import butterknife.BindView;
 
@@ -98,5 +99,11 @@ public class HomeActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         }
         fragmentTransaction.commit();
         mIndex = index;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (NiceVideoPlayerManager.getsInstance().onBackPressed()) return;
+        super.onBackPressed();
     }
 }

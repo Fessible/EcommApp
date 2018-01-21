@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.IntDef;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -232,35 +233,84 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         this.niceVideoPlayer = niceVideoPlayer;
     }
 
-    //视频
-    class VideoHolder extends HomeHolder<VideoItem> {
-
-//        @BindView(R.id.video_view)
-//        NiceVideoPlayer niceVideoPlayer;
-        @BindView(R.id.videoplayer)
-        JZVideoPlayerStandard jzVideoPlayerStandard;
-
-        @BindView(R.id.item_logo_view)
-        ImageView logo;
-
-        public VideoHolder(Context context, ViewGroup parent) {
-
-            super(context, parent, R.layout.item_video_layout);
-        }
-
-        @Override
-        public void bindHolder(Context context, VideoItem item) {
-            jzVideoPlayerStandard.setUp("http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
-                    , JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "饺子闭眼睛");
-            jzVideoPlayerStandard.thumbImageView.setImageURI(Uri.parse("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640"));
-//            setNiceVideoPlayer(niceVideoPlayer);
+//    //视频
+//    public class VideoHolder extends HomeHolder<VideoItem> {
+//
+//        @BindView(R.id.videoplayer)
+//        public NiceVideoPlayer niceVideoPlayer;
+////        @BindView(R.id.videoplayer)
+////        JZVideoPlayerStandard jzVideoPlayerStandard;
+//
+//        @BindView(R.id.item_logo_view)
+//        ImageView logo;
+//
+//        public VideoHolder(Context context, ViewGroup parent) {
+//
+//            super(context, parent, R.layout.item_video_layout);
+//        }
+//
+//        @Override
+//        public void bindHolder(Context context, VideoItem item) {
+////            jzVideoPlayerStandard.setUp("http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
+////                    , JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "饺子闭眼睛");
+////            jzVideoPlayerStandard.thumbImageView.setImageURI(Uri.parse("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640"));
+////            setNiceVideoPlayer(niceVideoPlayer);
 //            RecommendValue value = item.value;
 //            ImageLoaderManager.getInstance(context).displayImage(logo, value.logo);
 //            TxVideoPlayerController controller = new TxVideoPlayerController(context);
-//            controller.setUrl(value.resource);
-//            controller.setTitle("");
-//            Glide.with(context).load(value.url).into(controller.imageView());
+////            controller.setUrl(value.resource);
+////            controller.setTitle("");
+////            Glide.with(context).load(value.url).into(controller.imageView());
+////            niceVideoPlayer.setController(controller);
+////            mController.setTitle(video.getTitle());
+////            mController.setLength(video.getLength());
+//            ViewGroup.LayoutParams params = niceVideoPlayer.getLayoutParams();
+//            params.width = itemView.getResources().getDisplayMetrics().widthPixels; // 宽度为屏幕宽度
+//            params.height = (int) (params.width * 9f / 16f);    // 高度为宽度的9/16
+//            niceVideoPlayer.setLayoutParams(params);
+//
 //            niceVideoPlayer.setController(controller);
+//            Glide.with(itemView.getContext())
+//                    .load(value.logo)
+//                    .into(controller.imageView());
+//            niceVideoPlayer.setUp(value.resource, null);
+//        }
+//
+//    }
+
+    public class VideoHolder extends HomeHolder<VideoItem> {
+
+        public TxVideoPlayerController mController;
+        public NiceVideoPlayer mVideoPlayer;
+
+        public VideoHolder(Context context, ViewGroup parent) {
+            super(context, parent, R.layout.item_video_layout);
+            TxVideoPlayerController controller = new TxVideoPlayerController(context);
+            mVideoPlayer = (NiceVideoPlayer) itemView.findViewById(R.id.videoplayer);
+            setController(controller);
+            // 将列表中的每个视频设置为默认16:9的比例
+            ViewGroup.LayoutParams params = mVideoPlayer.getLayoutParams();
+            params.width = itemView.getResources().getDisplayMetrics().widthPixels; // 宽度为屏幕宽度
+            params.height = (int) (params.width * 9f / 16f);    // 高度为宽度的9/16
+            mVideoPlayer.setLayoutParams(params);
+        }
+
+
+        public void setController(TxVideoPlayerController controller) {
+            mController = controller;
+            mVideoPlayer.setController(mController);
+        }
+
+
+        @Override
+        public void bindHolder(Context context, VideoItem item) {
+            RecommendValue value = item.value;
+//            mController.setTitle(video.getTitle());
+//            mController.setLength(video.getLength());
+            Glide.with(itemView.getContext())
+                    .load(value.logo)
+                    .into(mController.imageView());
+            mVideoPlayer.setUp(value.resource, null);
         }
     }
 

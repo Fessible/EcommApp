@@ -5,14 +5,8 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.com.ecommapp.R;
@@ -36,7 +30,6 @@ import butterknife.OnClick;
 import cn.jzvd.JZVideoPlayer;
 
 import static com.example.com.ecommapp.activity.PhotoActivity.PHOTO_VIEW;
-import static com.example.com.ecommapp.adapter.HomeAdapter.TYPE_VIDEO;
 
 /**
  * Created by rhm on 2017/10/31.
@@ -78,9 +71,12 @@ public class HomeFragment extends BaseFragment {
         recyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
             @Override
             public void onViewRecycled(RecyclerView.ViewHolder holder) {
-                NiceVideoPlayer niceVideoPlayer = adapter.getNiceVideoPlayer();
-                if (niceVideoPlayer == NiceVideoPlayerManager.getsInstance().getCurrentNiceVideoPlayer()) {
-                    NiceVideoPlayerManager.getsInstance().releaseNiceVideoPlayer();
+                if (holder instanceof HomeFragmentAdapter.VideoHolder) {
+
+                    NiceVideoPlayer niceVideoPlayer = ((HomeFragmentAdapter.VideoHolder) holder).mVideoPlayer;
+                    if (niceVideoPlayer == NiceVideoPlayerManager.getsInstance().getCurrentNiceVideoPlayer()) {
+                        NiceVideoPlayerManager.getsInstance().releaseNiceVideoPlayer();
+                    }
                 }
             }
         });
